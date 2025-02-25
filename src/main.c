@@ -47,6 +47,7 @@ int main()
 	initSysTick();
 	setupIO();
 	putImage(20,80,12,16,dg1,0,0);
+	putImage(40,120,16,16,lilguy,0,0);
 	while(1)
 	{
 		hmoved = vmoved = 0;
