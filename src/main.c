@@ -93,15 +93,15 @@ int main()
 		if ((vmoved) || (hmoved))
 		{
 			// only redraw if there has been some movement (reduces flicker)
-			fillRectangle(oldx,oldy,12,16,0);
+			fillRectangle(oldx,oldy,16,16,0);
 			oldx = x;
 			oldy = y;					
 			if (hmoved)
 			{
 				if (toggle)
-					putImage(x,y,12,16,deco1,hinverted,0);
+					putImage(x,y,16,16,lilguy,hinverted,0);
 				else
-					putImage(x,y,12,16,deco2,hinverted,0);
+					putImage(x,y,16,16,lilguy,hinverted,0);
 				
 				toggle = toggle ^ 1;
 			}
