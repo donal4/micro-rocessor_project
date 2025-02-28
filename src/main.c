@@ -227,3 +227,23 @@ void setupIO()
 	enablePullUp(GPIOA,8);
 
 }
+
+
+// 					random function 
+/* 
+
+void random(uint16_t x1, uint16_t y1){
+
+	//the old position 
+	int old_position_x;
+	int old_position_y; 
+
+	//get random x and y co-ords less than maximum value for new position 
+	int current_x ; rand() % (max + 1);
+	int current_x ; rand() % (max + 1);
+	
+
+}
+
+
+*/
