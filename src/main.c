@@ -8,6 +8,9 @@ void SysTick_Handler(void);
 void delay(volatile uint32_t dly);
 void setupIO();
 
+//main menu 
+void menu_start();
+
 // void random(uint16_t x1, uint16_t y1);
 					//x   co-ord   y co -ord   width        height 		player x      player y 
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py);
@@ -62,6 +65,8 @@ int main()
 	uint16_t y = 50;
 	uint16_t oldx = x;
 	uint16_t oldy = y;
+	//main menu call 
+	//menu
 	initClock();
 	initSysTick();
 	setupIO();
@@ -256,4 +261,20 @@ void random(uint16_t x1, uint16_t y1){
 }
 
 
+
+
 */
+
+// main menu function 
+
+void menu_start(/*menu_image*/){
+	//title (lil guy v superevilguy)
+	printTextX2("lilguy", 10, 20, RGBToWord(0xff,0xff,0), 0);
+	printTextX2("V", 10, 20, RGBToWord(0xff,0xff,0), 0);
+	printTextX2("superevilguy", 10, 20, RGBToWord(0xff,0xff,0), 0);
+
+
+
+	__asm(" wfi "); // sleep
+}
+
