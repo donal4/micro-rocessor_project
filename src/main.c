@@ -61,6 +61,10 @@ int main()
 	int toggle = 0;
 	int hmoved = 0;
 	int vmoved = 0;
+
+	//player score 
+	int score = 0;
+	
 	uint16_t x = 50;
 	uint16_t y = 50;
 	uint16_t oldx = x;
@@ -71,11 +75,11 @@ int main()
 	initSysTick();
 	setupIO();
 	menu_start();
-	putImage(0,0,12,16,dg1,0,0);
-	putImage(80,120,16,16,superevilguy1,0,0);
-	putImage(40,120,16,16,lilguy,0,0);
+	//putImage(0,0,12,16,dg1,0,0);
 	while(1)
 	{
+		printNumberX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
+		printNumber(score, 0, 0, RGBToWord(0xff,0xff,0), 0);
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
@@ -272,11 +276,19 @@ void random(uint16_t x1, uint16_t y1){
 void menu_start(/*menu_image*/){
 	//loop for menu 
 	while (1)
-	{
+	{	
+		//				gui
+		//text
 		printTextX2("lilguy", 30, 10, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("V", 60, 30, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("super evil", 10, 50, RGBToWord(0xff,0xff,0), 0);
-		printTextX2("guy", 47, 70, RGBToWord(0xff,0xff,0), 0);/* code */
+		printTextX2("guy", 47, 70, RGBToWord(0xff,0xff,0), 0);
+		printTextX2("up 2 start", 10, 120, RGBToWord(0xff,0x0,0), 0);
+		//characters 
+		putImage(80,100,16,16,superevilguy1,0,0);
+		putImage(40,100,16,16,lilguy,0,0);
+
+
 		__asm("wfi");
 		if ( (GPIOA->IDR & (1 << 11)) == 0)//up
 		{
