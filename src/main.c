@@ -29,6 +29,7 @@ const uint16_t lilguy4[]=
 {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8192,0,0,0,0,0,0,0,0,7424,7936,47872,7936,7936,7424,256,0,0,0,0,7936,7936,64263,64263,64263,64263,6912,7936,0,0,0,0,7936,64263,64263,64263,64263,64263,64263,7936,0,0,7936,7936,7936,64263,64263,64263,64263,64263,64263,7936,7168,7936,7680,7424,7936,64263,64263,64263,64263,64263,64263,7936,6656,6656,0,0,7936,64263,64263,64263,64263,64263,64263,7936,512,0,0,0,7936,7936,64263,64263,64263,64263,7936,7936,0,0,0,0,0,7936,7936,7936,7936,7936,7424,0,0,0,0,0,0,0,0,7936,7936,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, };
 
+//items 
 const uint16_t dg1[]=
 {
 	0,0,16142,16142,16142,16142,16142,16142,16142,16142,0,0,0,0,0,16142,16142,16142,16142,16142,16142,0,0,0,0,0,16142,16142,16142,16142,16142,16142,16142,16142,0,0,0,0,16142,16142,16142,1994,1994,16142,16142,16142,0,0,0,0,16142,16142,16142,1994,16142,1994,16142,16142,0,0,0,0,16142,16142,16142,1994,16142,1994,16142,16142,0,0,0,0,16142,16142,16142,1994,16142,1994,16142,16142,0,0,0,0,16142,16142,16142,1994,1994,16142,16142,16142,0,0,0,0,16142,16142,16142,16142,16142,16142,16142,16142,0,0,0,0,16142,16142,16142,1994,1994,1994,16142,16142,0,0,0,0,16142,16142,16142,1994,16142,16142,16142,16142,0,0,0,0,16142,16142,16142,1994,16142,16142,16142,16142,0,0,0,0,16142,16142,16142,1994,16142,1994,16142,16142,0,0,0,0,16142,16142,16142,1994,1994,1994,16142,16142,0,0,0,0,0,16142,16142,16142,16142,16142,16142,0,0,0,0,0,0,16142,16142,16142,16142,16142,16142,0,0,0,
@@ -56,6 +57,7 @@ const uint16_t deco2[]=
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
+	//variables 
 	int hinverted = 0;
 	int vinverted = 0;
 	int toggle = 0;
@@ -65,6 +67,7 @@ int main()
 	//player score 
 	int score = 0;
 	
+	//positioning 
 	uint16_t x = 50;
 	uint16_t y = 50;
 	uint16_t oldx = x;
@@ -78,8 +81,8 @@ int main()
 	//putImage(0,0,12,16,dg1,0,0);
 	while(1)
 	{
-		printNumberX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
-		printNumber(score, 0, 0, RGBToWord(0xff,0xff,0), 0);
+		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
+		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
@@ -127,6 +130,7 @@ int main()
 			oldy = y;					
 			if (hmoved)
 			{
+				//draws charactar to the screen 
 				if (toggle)
 					putImage(x,y,16,16,lilguy,hinverted,0);
 				else
@@ -251,25 +255,60 @@ void setupIO()
 
 
 // 					random function 
-/* 
 
+/*
 void random(uint16_t x1, uint16_t y1){
 
 	//the old position 
 	int old_position_x;
 	int old_position_y; 
 
-	//get random x and y co-ords less than maximum value for new position 
-	int current_x ; rand() % (max + 1);
-	int current_x ; rand() % (max + 1);
+	//get random x and y co-ords less than max screen value 
+	int evil_x ; rand() % (128 + 1);
+	int evil_y ; rand() % (160 + 1);
+
+	//random direction 
+	int direction =0; 
+
+	direction = rand() %(4 + 1) ; 
+
+	//draw superevil guy to screen 
+	//move drawing to main so that 
+	putImage(evil_x, evil_y, 16,16,superevilguy1,0,0);
+
+	//picks random direction to move character in 
+	switch(direction){
+		//up 
+		case 1: 
+		{
+			evil_y = evil_y - 1;
+			vmoved = 1;
+			vinverted = 1;
+		}
+		//down
+		case 2: 
+		{
+			
+		}
+		//left 
+		case 3:
+		{
+
+
+		}
+		//right 
+		case 4: 
+		{
+			
+		}
+	}
 
 
 }
-
-
-
-
 */
+
+
+
 
 // main menu function 
 
@@ -290,28 +329,12 @@ void menu_start(/*menu_image*/){
 
 
 		__asm("wfi");
-		if ( (GPIOA->IDR & (1 << 11)) == 0)//up
+		if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 		{
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 			break;
 		}
 	}
-	
-	
-		
-
-			//gui
-			//title (lil guy v superevilguy)
-			
-
-	//__asm("wfi");//sleep 
-
-			//if button pressed clear 
-	
-		
-	
-
-
 
 }
 

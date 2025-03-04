@@ -1,0 +1,27 @@
+Code quality and comments
+	
+Game play
+	
+Use of additional inputs and outputs (e.g. buttons and LED's)
+	
+Use of additional graphics API functions
+	
+Sprite design and animation
+	
+Game status/ HUD display/ score
+	
+Main menu (DONE)
+
+Ability to restart / replay
+	
+Use of random numbers
+		
+Multiplayer or other novel feature
+	
+Use of serial port (input and output)
+	
+Use of sound
+	
+	
+------------------------------------------------------------------
+Demonstration video 
