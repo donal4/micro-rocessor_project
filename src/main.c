@@ -2,6 +2,7 @@
 //test 
 #include <stm32f031x6.h>
 #include "display.h"
+
 void initClock(void);
 void initSysTick(void);
 void SysTick_Handler(void);
@@ -11,7 +12,11 @@ void setupIO();
 //main menu 
 void menu_start();
 
-// void random(uint16_t x1, uint16_t y1);
+//items 
+//int item
+//random values
+int random_y();
+int random_x(/*uint16_t x1, uint16_t y1*/);
 					//x   co-ord   y co -ord   width        height 		player x      player y 
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py);
 
@@ -267,7 +272,7 @@ void random(uint16_t x1, uint16_t y1){
 	int old_position_x;
 	int old_position_y; 
 
-	//get random x and y co-ords less than max screen value 
+	//getrandom_xx and y co-ords less than max screen value 
 	int evil_x ; rand() % (128 + 1);
 	int evil_y ; rand() % (160 + 1);
 
@@ -281,7 +286,7 @@ void random(uint16_t x1, uint16_t y1){
 	putImage(evil_x, evil_y, 16,16,superevilguy1,0,0);
 	putImage()
 
-	//picks random direction to move character in 
+	//picksrandom_xdirection to move character in 
 	switch(direction){
 		//up 
 		case 1: 
@@ -311,15 +316,24 @@ void random(uint16_t x1, uint16_t y1){
 
 }
 */
-/*
-int random(int){
+
+//function to give ramdom x co-ords in screen
+int random_x(/*int , int*/){
+
+	int rand_x = rand() % 128 + 1 ;
 
 
-
-
-	return int; 
+	return rand_x; 
 }
-	*/
+//function to give ramdom y co-ords in screen
+int random_y(/*int , int*/){
+
+	int rand_y = rand() % 160 + 1 ;
+
+
+	return rand_y; 
+}
+
 
 
 
