@@ -311,14 +311,24 @@ void random(uint16_t x1, uint16_t y1){
 
 }
 */
+<<<<<<< HEAD
 /* int random(int){
+=======
+/*
+int random(int){
+>>>>>>> 64a57720daef6d8aae6d39a6bb7a8326e55c6e04
 
-	
+
 
 
 	return int; 
 }
+<<<<<<< HEAD
  */
+=======
+	*/
+
+>>>>>>> 64a57720daef6d8aae6d39a6bb7a8326e55c6e04
 
 
 // main menu function 
