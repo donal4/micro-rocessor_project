@@ -311,13 +311,15 @@ void random(uint16_t x1, uint16_t y1){
 
 }
 */
+/*
 int random(int){
 
-	
+
 
 
 	return int; 
 }
+	*/
 
 
 
