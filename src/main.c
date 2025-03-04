@@ -80,8 +80,8 @@ int main()
 	menu_start();
 
 	//light test 
-	pinMode(GPIOA,1,1);
-	GPIOA->ODR= 1;
+	//pinMode(GPIOA,1,1);
+	//GPIOA->ODR = 1;
 	//putImage(0,0,12,16,dg1,0,0);
 	while(1)
 	{
@@ -148,9 +148,9 @@ int main()
 			}
 			
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
-			if (isInside(20,80,12,16,x,y) || isInside(20,80,12,16,x+12,y) || isInside(20,80,12,16,x,y+16) || isInside(20,80,12,16,x+12,y+16) )
+			if (isInside(20,80,16,16,x,y) || isInside(20,80,16,16,x+16,y) || isInside(20,80,16,16,x,y+16) || isInside(20,80,16,16,x+16,y+16) )
 			{
-				printTextX2("GLUG!", 10, 20, RGBToWord(0xff,0xff,0), 0);
+				score+=1;
 			}
 		}		
 		delay(100);
@@ -311,14 +311,14 @@ void random(uint16_t x1, uint16_t y1){
 
 }
 */
-int random(int){
+/* int random(int){
 
 	
 
 
 	return int; 
 }
-
+ */
 
 
 // main menu function 
