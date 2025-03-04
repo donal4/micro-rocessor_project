@@ -260,78 +260,26 @@ void setupIO()
 
 // 					random function 
 
-/*
-void random(uint16_t x1, uint16_t y1){
-
-	//the old position 
-	int old_position_x;
-	int old_position_y; 
-
-	//get random x and y co-ords less than max screen value 
-	int evil_x ; rand() % (128 + 1);
-	int evil_y ; rand() % (160 + 1);
-
-	//random direction 
-	int direction =0; 
-
-	direction = rand() %(4 + 1) ; 
-
-	//draw superevil guy to screen 
-	//move drawing to main so that 
-	putImage(evil_x, evil_y, 16,16,superevilguy1,0,0);
-	putImage()
-
-	//picks random direction to move character in 
-	switch(direction){
-		//up 
-		case 1: 
-		{
-			evil_y = evil_y - 1;
-			vmoved = 1;
-			vinverted = 1;
-		}
-		//down
-		case 2: 
-		{
-			
-		}
-		//left 
-		case 3:
-		{
 
 
-		}
-		//right 
-		case 4: 
-		{
-			
-		}
-	}
+//function to give ramdom x co-ords in screen
+int random_x(/*int , int*/){
+
+	int rand_x = rand() % 128 + 1 ;
 
 
+	return rand_x; 
 }
-*/
-<<<<<<< HEAD
-/* int random(int){
-=======
-/*
-int random(int){
->>>>>>> 64a57720daef6d8aae6d39a6bb7a8326e55c6e04
+//function to give ramdom y co-ords in screen
+int random_y(/*int , int*/){
+
+	int rand_y = rand() % 160 + 1 ;
 
 
-
-
-	return int; 
+	return rand_y; 
 }
-<<<<<<< HEAD
- */
-=======
-	*/
-
->>>>>>> 64a57720daef6d8aae6d39a6bb7a8326e55c6e04
 
 
-// main menu function 
 
 void menu_start(/*menu_image*/){
 	//loop for menu 
