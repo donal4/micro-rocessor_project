@@ -78,6 +78,10 @@ int main()
 	initSysTick();
 	setupIO();
 	menu_start();
+
+	//light test 
+	pinMode(GPIOA,1,1);
+	GPIOA->ODR= 1;
 	//putImage(0,0,12,16,dg1,0,0);
 	while(1)
 	{
@@ -275,6 +279,7 @@ void random(uint16_t x1, uint16_t y1){
 	//draw superevil guy to screen 
 	//move drawing to main so that 
 	putImage(evil_x, evil_y, 16,16,superevilguy1,0,0);
+	putImage()
 
 	//picks random direction to move character in 
 	switch(direction){
@@ -306,7 +311,13 @@ void random(uint16_t x1, uint16_t y1){
 
 }
 */
+int random(int){
 
+	
+
+
+	return int; 
+}
 
 
 
