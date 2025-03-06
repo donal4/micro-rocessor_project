@@ -2,6 +2,9 @@
 //test 
 #include <stm32f031x6.h>
 #include "display.h"
+//sound 
+#include "sound.h"
+
 void initClock(void);
 void initSysTick(void);
 void SysTick_Handler(void);
@@ -17,6 +20,8 @@ int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint
 
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
+
+void item_gen(void); 
 
 volatile uint32_t milliseconds;
 
@@ -79,6 +84,7 @@ int main()
 	setupIO();
 	menu_start();
 
+	item_gen();
 	//light test 
 	//pinMode(GPIOA,1,1);
 	//GPIOA->ODR = 1;
@@ -121,6 +127,8 @@ int main()
 		{			
 			if (y > 16)
 			{
+				//item test
+				item_gen();
 				y = y - 1;
 				vmoved = 1;
 				vinverted = 1;
@@ -307,3 +315,17 @@ void menu_start(/*menu_image*/){
 
 }
 
+
+void item_gen(void){
+	int x ; 
+	int y ; 
+	//uses random function to draw items 
+	x = random_x; 
+	y = random_y;
+
+	//draws coin
+	//putImage(x,y,12,16,coin,0,0);//
+	putImage(x,y,16,16,coin,x,y);
+
+	 
+}

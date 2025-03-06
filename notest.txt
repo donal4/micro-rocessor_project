@@ -1,0 +1,21 @@
+------------------------------------------bar1 ---------------------------------------------------------
+B4 quaver 
+c4 semiquaver 
+a#4 dotted quaver 
+b4 semi quaver
+
+a4 semiquaver  
+a4 semi quaver 
+a4 quaver 
+
+g3 crochet 
+------------------------------------------bar 2 --------------------------------------------------
+
+
+g#3 quaver
+a#4 semiquaver
+g3 dotted quaver
+g#3 quaver
+
+f#3 minum
+
