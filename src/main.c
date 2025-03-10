@@ -18,7 +18,12 @@ void playNote(uint32_t Freq);
 void initSound(void);
 
 //main menu 
-void menu_start();
+void menu_start(void);
+
+//random functions 
+int randomevil(void); 
+int random_y(void);
+int random_x(void);
 
 // void random(uint16_t x1, uint16_t y1);
 					//x   co-ord   y co -ord   width        height 		player x      player y 
