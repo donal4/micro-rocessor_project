@@ -290,6 +290,7 @@ void setupIO()
 //function to give ramdom x co-ords in screen
 int random_x(/*int , int*/){
 
+	//gets a random x value <= 128 
 	int rand_x = rand() % 128 + 1 ;
 
 
@@ -298,6 +299,7 @@ int random_x(/*int , int*/){
 //function to give ramdom y co-ords in screen
 int random_y(/*int , int*/){
 
+	//gets a random y value <= 160 
 	int rand_y = rand() % 160 + 1 ;
 
 
