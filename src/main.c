@@ -70,9 +70,21 @@ int main()
 	int hmoved = 0;
 	int vmoved = 0;
 
+
+
+	int hinverted2 = 0;
+	int vinverted2 = 0;
+	int toggle2 = 0;
+	int hmoved2 = 0;
+	int vmoved2 = 0;
+
+
 	//random x and y 
 	int randx = random_x();
 	int randy = random_y();
+
+
+	int randevil = randomevil();
 
 	//player score 
 	int score = 0;
@@ -80,8 +92,12 @@ int main()
 	//positioning 
 	uint16_t x = 50;
 	uint16_t y = 50;
+	uint16_t x2 = 100;
+	uint16_t y2 = 100;
 	uint16_t oldx = x;
 	uint16_t oldy = y;
+	uint16_t oldx2 = x2;
+	uint16_t oldy2 = y2;
 	//main menu call 
 	
 	initClock();
@@ -91,6 +107,7 @@ int main()
 
 	//Draws the coin onto the screen
 	item_gen(hinverted ,randy,randx);
+	putImage(x2,y2,16,16,superevilguy1,hinverted,0);
 	
 	//light test 
 	//pinMode(GPIOA,1,1);
@@ -103,11 +120,13 @@ int main()
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
+
+		//Lilguy code
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
 			if (x < 110)
 			{
-				x = x + 1;
+				x = x + 3;
 				hmoved = 1;
 				hinverted=0;
 			}						
@@ -117,7 +136,7 @@ int main()
 			
 			if (x > 10)
 			{
-				x = x - 1;
+				x = x - 3;
 				hmoved = 1;
 				hinverted=1;
 			}			
@@ -126,7 +145,7 @@ int main()
 		{
 			if (y < 140)
 			{
-				y = y + 1;			
+				y = y + 3;			
 				vmoved = 1;
 				vinverted = 0;
 			}
@@ -135,14 +154,47 @@ int main()
 		{			
 			if (y > 16)
 			{
-				//item test
-				item_gen();
-				y = y - 1;
+				y = y - 3;
 				vmoved = 1;
 				vinverted = 1;
 			}
 		}
 
+		switch(randevil) {
+			case 1:
+				if (x2 < 110)
+				{
+					x2 = x2 + 3;
+					hmoved2 = 1;
+					hinverted2=0;
+				}				
+				break;
+			case 2:
+				if (x2 > 10)
+				{
+					x2 = x2 - 3;
+					hmoved2 = 1;
+					hinverted2=1;
+				}				
+				break;
+			case 3:
+				if (y2 < 140)
+				{
+					y2 = y2 + 3;			
+					vmoved2 = 1;
+					vinverted2 = 0;
+				}
+				break;
+			case 4:
+				if (y2 > 16)
+				{
+					y2 = y2 - 3;
+					vmoved2 = 1;
+					vinverted2 = 1;
+				}
+			
+		}
+		randevil = randomevil();
 		
 		
 		if ((vmoved) || (hmoved))
@@ -165,9 +217,11 @@ int main()
 			{
 				putImage(x,y,12,16,lilguy4,0,vinverted);
 			}
+
+
 			
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
-			if (isInside(20,80,16,16,randx,randy) || isInside(20,80,16,16,randx+16,randy) || isInside(20,80,16,16,randx,randy+16) || isInside(20,80,16,16,randx+16,randy+16) )
+			if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(x,y,16,16,x+16,+16) )
 			{
 				score+=1;
 				int oldrandx = randx;
@@ -180,6 +234,27 @@ int main()
 				putImage(randx,randy,16,16,coin,hinverted,0);
 			}
 		}		
+		if ((vmoved2) || (hmoved2))
+		{
+			// only redraw if there has been some movement (reduces flicker)
+			fillRectangle(oldx2,oldy2,16,16,0);
+			oldx2 = x2;
+			oldy2 = y2;					
+			if (hmoved2)
+			{
+				//draws charactar to the screen 
+				if (toggle2)
+					putImage(x2,y2,16,16,superevilguy1,hinverted2,0);
+				else
+					putImage(x2,y2,16,16,superevilguy2,hinverted2,0);
+				
+				toggle2 = toggle2 ^ 1;
+			}
+			else
+			{
+				putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
+			}
+		}
 		delay(100);
 	}
 	return 0;
@@ -304,6 +379,12 @@ int random_y(/*int , int*/){
 
 
 	return rand_y; 
+}
+
+int randomevil(){
+	int randevil = rand() % 4 + 1 ;
+
+	return randevil;
 }
 
 
