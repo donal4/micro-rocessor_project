@@ -14,8 +14,8 @@ void delay(volatile uint32_t dly);
 void setupIO();
 
 //sound 
-void playNote(uint32_t Freq);
-void initSound(void);
+//void playNote(uint32_t Freq);
+//void initSound(void);
 
 //main menu 
 void menu_start(void);
@@ -115,6 +115,9 @@ int main()
 	initSysTick();
 	setupIO();
 	menu_start();
+
+	//sound 
+	initSound();
 
 	//Draws the coin onto the screen
 	item_gen(hinverted ,randy,randx);
@@ -244,9 +247,11 @@ int main()
 			{
 				score+=1;
 				//play sound 
-				playNote(B6);
-				delay(0.5);
-				playNote(B7);
+				playNote(B6);//coin sound 
+				delay(1);//delay
+				playNote(B7);//octave above 
+				delay(1);//delay
+				playNote(0);//stops sound
 
 				/*
 				int oldrandx = randx;
