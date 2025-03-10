@@ -221,6 +221,7 @@ int main()
 			}
 			else
 			{
+				//topdown lilguy 
 				putImage(x,y,12,16,lilguy4,0,vinverted);
 			}
 
@@ -235,9 +236,12 @@ int main()
 				delay(0.5);
 				playNote(B7);
 
+				
 				int oldrandx = randx;
 				int oldrandy = randy;
-				fillRectangle(oldrandx,oldrandy,16,16,0);
+				
+				fillRectangle(randx,randy,16,16,0);
+				
 
 				randx = random_x();
 				randy = random_y();
@@ -381,6 +385,10 @@ int random_x(/*int , int*/){
 
 	int rand_x = rand() % 118 + 1 ;
 
+	//if x is on the edges 
+	if(rand_x == 0 || rand_x == 118){
+		random_x();
+	}
 
 	return rand_x; 
 }
@@ -389,7 +397,10 @@ int random_y(/*int , int*/){
 
 	int rand_y = rand() % 150 + 1 ;
 
-
+	//if y is on the edges 
+	if(rand_y == 0 || rand_y == 150){
+		random_y();
+	}
 	return rand_y; 
 }
 
@@ -411,8 +422,9 @@ void menu_start(/*menu_image*/){
 		printTextX2("V", 60, 30, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("super evil", 10, 50, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("guy", 47, 70, RGBToWord(0xff,0xff,0), 0);
+
 		printText("up start P1", 10, 120, RGBToWord(0xff,0x0,0), 0);
-		printText("down start p2"0, 120, RGBToWord(0xff,0x0,0), 0); 
+		printText("down start p2",10, 128, RGBToWord(0xff,0x0,0), 0); 
 		//characters 
 		putImage(80,100,16,16,superevilguy1,0,0);
 		putImage(40,100,16,16,lilguy,0,0);
