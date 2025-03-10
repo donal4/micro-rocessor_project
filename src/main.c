@@ -5,12 +5,17 @@
 
 //sound 
 #include "sound.h"
+#include "musical_notes.h"
 
 void initClock(void);
 void initSysTick(void);
 void SysTick_Handler(void);
 void delay(volatile uint32_t dly);
 void setupIO();
+
+//sound 
+void playNote(uint32_t Freq);
+void initSound(void);
 
 //main menu 
 void menu_start();
@@ -171,6 +176,11 @@ int main()
 			if (isInside(20,80,16,16,randx,randy) || isInside(20,80,16,16,randx+16,randy) || isInside(20,80,16,16,randx,randy+16) || isInside(20,80,16,16,randx+16,randy+16) )
 			{
 				score+=1;
+				//play sound 
+				playNote(B6);
+				delay(0.5);
+				playNote(B7);
+
 				int oldrandx = randx;
 				int oldrandy = randy;
 				fillRectangle(oldrandx,oldrandy,16,16,0);
@@ -179,6 +189,7 @@ int main()
 				randy = random_y();
 
 				putImage(randx,randy,16,16,coin,hinverted,0);
+				
 			}
 		}		
 		delay(100);
