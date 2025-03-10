@@ -330,14 +330,22 @@ void menu_start(/*menu_image*/){
 		printTextX2("V", 60, 30, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("super evil", 10, 50, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("guy", 47, 70, RGBToWord(0xff,0xff,0), 0);
-		printTextX2("up 2 start", 10, 120, RGBToWord(0xff,0x0,0), 0);
+		printText("up start P1", 10, 120, RGBToWord(0xff,0x0,0), 0);
+		printText("down start p2"0, 120, RGBToWord(0xff,0x0,0), 0); 
 		//characters 
 		putImage(80,100,16,16,superevilguy1,0,0);
 		putImage(40,100,16,16,lilguy,0,0);
 
 
 		__asm("wfi");
+		//player 1 
 		if ( (GPIOA->IDR & (1 << 8)) == 0)//up
+		{
+			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+			break;
+		}
+		//player 2 
+		else if ( (GPIOA->IDR & (1 << 11)) == 0)//down
 		{
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 			break;
