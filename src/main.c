@@ -166,6 +166,7 @@ int main()
 			}
 		}
 
+		//movement of superevilguy 
 		switch(randevil) {
 			case 1:
 				if (x2 < 110)
@@ -225,10 +226,16 @@ int main()
 				putImage(x,y,12,16,lilguy4,0,vinverted);
 			}
 
+			//is character inside the evilguy
+			if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
+			{
+				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
+
+			}
 
 			
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
-			if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(x,y,16,16,x+16,+16) )
+			if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )
 			{
 				score+=1;
 				//play sound 
@@ -236,10 +243,11 @@ int main()
 				delay(0.5);
 				playNote(B7);
 
-				
+				/*
 				int oldrandx = randx;
 				int oldrandy = randy;
-				
+				*/
+
 				fillRectangle(randx,randy,16,16,0);
 				
 
