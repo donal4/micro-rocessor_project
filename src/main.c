@@ -21,7 +21,7 @@ int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
-void item_gen(void); 
+void item_gen(hinverted ,randy,randx); 
 
 volatile uint32_t milliseconds;
 
@@ -69,6 +69,10 @@ int main()
 	int hmoved = 0;
 	int vmoved = 0;
 
+	//random x and y 
+	int randx = random_x();
+	int randy = random_y();
+
 	//player score 
 	int score = 0;
 	
@@ -84,7 +88,9 @@ int main()
 	setupIO();
 	menu_start();
 
-	item_gen();
+	//Draws the coin onto the screen
+	item_gen(hinverted ,randy,randx);
+	
 	//light test 
 	//pinMode(GPIOA,1,1);
 	//GPIOA->ODR = 1;
@@ -135,10 +141,8 @@ int main()
 			}
 		}
 
-		int randx = random_x();
-		int randy = random_y();
-
-		putImage(randx,randy,16,16,coin,hinverted,0);
+		
+		
 		if ((vmoved) || (hmoved))
 		{
 			// only redraw if there has been some movement (reduces flicker)
@@ -164,8 +168,14 @@ int main()
 			if (isInside(20,80,16,16,randx,randy) || isInside(20,80,16,16,randx+16,randy) || isInside(20,80,16,16,randx,randy+16) || isInside(20,80,16,16,randx+16,randy+16) )
 			{
 				score+=1;
+				int oldrandx = randx;
+				int oldrandy = randy;
+				fillRectangle(oldrandx,oldrandy,16,16,0);
+
 				randx = random_x();
 				randy = random_y();
+
+				putImage(randx,randy,16,16,coin,hinverted,0);
 			}
 		}		
 		delay(100);
@@ -323,16 +333,12 @@ void menu_start(/*menu_image*/){
 }
 
 
-void item_gen(void){
-	int x ; 
-	int y ; 
-	//uses random function to draw items 
-	x = random_x; 
-	y = random_y;
+void item_gen(hinverted ,randy,randx){
 
 	//draws coin
 	//putImage(x,y,12,16,coin,0,0);//
-	putImage(x,y,16,16,coin,x,y);
+	putImage(randx,randy,16,16,coin,hinverted,0);
+
 
 	 
 }
