@@ -95,6 +95,7 @@ int main()
 	//pinMode(GPIOA,1,1);
 	//GPIOA->ODR = 1;
 	//putImage(0,0,12,16,dg1,0,0);
+	
 	while(1)
 	{
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
