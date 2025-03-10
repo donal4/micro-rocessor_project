@@ -134,6 +134,11 @@ int main()
 				vinverted = 1;
 			}
 		}
+
+		int randx = random_x();
+		int randy = random_y();
+
+		putImage(randx,randy,16,16,coin,hinverted,0);
 		if ((vmoved) || (hmoved))
 		{
 			// only redraw if there has been some movement (reduces flicker)
@@ -156,9 +161,11 @@ int main()
 			}
 			
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
-			if (isInside(20,80,16,16,x,y) || isInside(20,80,16,16,x+16,y) || isInside(20,80,16,16,x,y+16) || isInside(20,80,16,16,x+16,y+16) )
+			if (isInside(20,80,16,16,randx,randy) || isInside(20,80,16,16,randx+16,randy) || isInside(20,80,16,16,randx,randy+16) || isInside(20,80,16,16,randx+16,randy+16) )
 			{
 				score+=1;
+				randx = random_x();
+				randy = random_y();
 			}
 		}		
 		delay(100);
