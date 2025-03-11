@@ -115,6 +115,7 @@ int main()
 	initSysTick();
 	setupIO();
 	menu_start();
+	Reset();
 
 	//Draws the coin onto the screen
 	item_gen(hinverted ,randy,randx);
@@ -169,6 +170,10 @@ int main()
 				vmoved = 1;
 				vinverted = 1;
 			}
+		}
+		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
+		{
+			Reset();
 		}
 
 		//movement of superevilguy 
@@ -469,4 +474,11 @@ void item_gen(hinverted ,randy,randx){
 
 
 	 
+}
+
+void Reset() //Resets when button is pressed 
+{
+	fillRectangle(0,0,128,160,0); //Should make the screen black 
+	delay(10);
+	menu_start();
 }
