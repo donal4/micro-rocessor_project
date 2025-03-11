@@ -23,7 +23,7 @@ void initSerial();
 //menu 
 
 //Reset
-void Reset(void);
+void reset(void);
 
 //main menu 
 void menu_start(void);
@@ -178,7 +178,7 @@ int main()
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 		{
-			Reset();
+			reset();
 		}
 
 		//movement of superevilguy 
@@ -251,11 +251,12 @@ int main()
 				delay(10);//delay
 				playNote(0);//stops sound
 
-				//minus 1 life 
-				hp--; 
+				
 
 				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
 
+				//minus 1 life 
+				hp--; 
 			}
 
 			
@@ -550,10 +551,10 @@ void health(){
 
 //______________________________________________________________________________________________________________
 //serial 
-
+/*
 void initSerial()
 {
-	/* On the nucleo board, TX is on PA2 while RX is on PA15 */
+	// On the nucleo board, TX is on PA2 while RX is on PA15 
 	RCC->AHBENR |= (1 << 17); // enable GPIOA
 	RCC->APB2ENR |= (1 << 14); // enable USART1
 	pinMode(GPIOA,2,2); // enable alternate function on PA2
@@ -591,8 +592,7 @@ void eputs(char *String)
 		eputchar(*String);
 		String++;
 	}
-}
-
+}*/
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
 void p1_game_over(score){
@@ -632,10 +632,12 @@ void p2_game_over(score){
 
 }
 
-void Reset()
+void reset()
 {
 	fillRectangle(0,0,128,160,0x0);
-	delay(10);
+	hp = 3; //resets health
+	score = 0; //sets score back to 0 
+	delay(10);//sleeps 1 second 
 	menu_start();
-
+	
 }
