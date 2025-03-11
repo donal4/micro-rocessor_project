@@ -242,10 +242,9 @@ int main()
 				playNote(0);//stops sound
 
 				//minus 1 life 
-				lives--; 
+				hp--; 
 
 				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
-				hp--;
 
 			}
 
