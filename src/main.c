@@ -20,6 +20,9 @@ void initSerial();
 //void playNote(uint32_t Freq);
 //void initSound(void);
 
+//Reset
+void Reset(void);
+
 //main menu 
 void menu_start(void);
 
@@ -107,6 +110,7 @@ int main()
 	initSound();
 	//start menu 
 	menu_start();
+	
 
 	
 	//Draws the coin onto the screen
@@ -390,10 +394,12 @@ void setupIO()
 	RCC->AHBENR |= (1 << 18) + (1 << 17); // enable Ports A and B
 
 	display_begin();
+	pinMode(GPIOA,0,0); //reset
 	pinMode(GPIOB,4,0);
 	pinMode(GPIOB,5,0);
 	pinMode(GPIOA,8,0);
 	pinMode(GPIOA,11,0);
+	enablePullUp(GPIOA,0); //reset
 	enablePullUp(GPIOB,4);
 	enablePullUp(GPIOB,5);
 	enablePullUp(GPIOA,11);
@@ -526,6 +532,14 @@ void health(){
 	}
 
 }	
+
+void Reset()
+{
+	fillRectangle(0,0,128,160,0x0);
+	delay(10);
+	menu_start();
+
+}
 
 //______________________________________________________________________________________________________________
 //serial 
