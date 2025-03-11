@@ -20,11 +20,15 @@ void initSerial();
 //void playNote(uint32_t Freq);
 //void initSound(void);
 
+//menu 
+
 //Reset
 void Reset(void);
 
 //main menu 
 void menu_start(void);
+void p1_game_over(int);
+void p2_game_over(int);
 
 //random functions 
 int randomevil(void); 
@@ -61,6 +65,9 @@ const uint16_t coin[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8191,32767,81
 
 //global var 
 int hp = 3; 
+//player score 
+int score = 0;
+int player_mode; 
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
@@ -87,8 +94,7 @@ int main()
 
 	int randevil = randomevil();
 
-	//player score 
-	int score = 0;
+	
 	
 	//positioning 
 	uint16_t x = 50;
@@ -110,7 +116,7 @@ int main()
 	initSound();
 	//start menu 
 	menu_start();
-	
+
 
 	
 	//Draws the coin onto the screen
@@ -394,12 +400,12 @@ void setupIO()
 	RCC->AHBENR |= (1 << 18) + (1 << 17); // enable Ports A and B
 
 	display_begin();
-	pinMode(GPIOA,0,0); //reset
+	pinMode(GPIOA,0,0); //reset button
 	pinMode(GPIOB,4,0);
 	pinMode(GPIOB,5,0);
 	pinMode(GPIOA,8,0);
 	pinMode(GPIOA,11,0);
-	enablePullUp(GPIOA,0); //reset
+	enablePullUp(GPIOA,0); //reset button
 	enablePullUp(GPIOB,4);
 	enablePullUp(GPIOB,5);
 	enablePullUp(GPIOA,11);
@@ -473,12 +479,16 @@ void menu_start(/*menu_image*/){
 		if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 		{
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+			//sets the game to be player 1 
+			player_mode = 1; 
 			break;
 		}
 		//player 2 
 		else if ( (GPIOA->IDR & (1 << 11)) == 0)//down
 		{
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+			//sets the game to be player 2 
+			player_mode = 2 ; 
 			break;
 		}
 	}
@@ -528,18 +538,15 @@ void health(){
 		GPIOA->ODR = GPIOA->ODR| (0<<1);
 
 		GPIOA->ODR = GPIOA->ODR| (0 <<3);
-		//death();//to be made 
+		if(player_mode == 1 ){
+			p1_game_over(score);
+		}
+		else if(player_mode == 2 ){
+			p1_game_over(score);
+		}
 	}
 
 }	
-
-void Reset()
-{
-	fillRectangle(0,0,128,160,0x0);
-	delay(10);
-	menu_start();
-
-}
 
 //______________________________________________________________________________________________________________
 //serial 
@@ -584,4 +591,51 @@ void eputs(char *String)
 		eputchar(*String);
 		String++;
 	}
+}
+
+//------------------------------------------------------------------------------------------------------------------------
+//game over screen for players 
+void p1_game_over(score){
+	// text 
+	printTextX2("Game", 10 ,10 ,RGBToWord(0xff,0xff,0), 0);
+	printTextX2("Over", 10 ,10 ,RGBToWord(0xff,0xff,0), 0);
+	printTextX2("score", 30, 10, RGBToWord(0xff,0xff,0), 0);
+    printNumberX2(score,30, 10, RGBToWord(0xff,0xff,0), 0);
+	
+	printText("Play again?", 10, 120, RGBToWord(0xff,0x0,0), 0);
+	printText("press down",10, 128, RGBToWord(0xff,0x0,0), 0); 
+	printText("Main Menu?",10, 128, RGBToWord(0xff,0x0,0), 0); 
+	
+
+	//characters 
+	putImage(80,100,16,16,superevilguy1,0,0);
+	putImage(40,100,16,16,lilguy,0,0);
+
+
+	__asm("wfi");
+	//play again 
+	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
+	{
+		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+
+		
+	}
+	//menu 
+	else if ( (GPIOA->IDR & (1 << 11)) == 0)//down
+	{
+		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+	}
+}
+
+
+void p2_game_over(score){
+
+}
+
+void Reset()
+{
+	fillRectangle(0,0,128,160,0x0);
+	delay(10);
+	menu_start();
+
 }
