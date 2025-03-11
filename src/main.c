@@ -166,6 +166,10 @@ int main()
 				vinverted = 1;
 			}
 		}
+		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
+		{
+			Reset();
+		}
 
 		//movement of superevilguy 
 		switch(randevil) {
@@ -230,6 +234,16 @@ int main()
 			//is character inside the evilguy
 			if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
 			{
+				//play sound 
+				playNote(B6);//coin sound 
+				delay(5);//delay
+				playNote(B7);//octave above 
+				delay(10);//delay
+				playNote(0);//stops sound
+
+				//minus 1 life 
+				lives--; 
+
 				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
 				hp--;
 
@@ -244,6 +258,7 @@ int main()
 				playNote(B6);//coin sound 
 				delay(10);//delay
 				playNote(B7);//octave above 
+				delay(10);//delay
 				delay(10);//delay
 				playNote(0);//stops sound
 
