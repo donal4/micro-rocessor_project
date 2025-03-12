@@ -49,6 +49,14 @@ volatile uint32_t milliseconds;
 
 
 //tune 
+uint32_t my_tune_notes[]={B5,A7,C4};
+uint32_t my_tune_times[]={1000,800,200};
+// Variables to handle background tunes
+uint32_t * background_tune_notes=0;
+uint32_t * background_tune_times;
+uint32_t background_note_count;
+uint32_t background_tune_repeat;
+
 
 
 // 				sprites 
@@ -492,6 +500,9 @@ void menu_start(/*menu_image*/){
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 			//sets the game to be player 1 
 			player_mode = 1; 
+
+			//start music 
+			playBackgroundTune(my_tune_notes,my_tune_times,3,0);
 			break;
 		}
 		//player 2 
@@ -500,6 +511,9 @@ void menu_start(/*menu_image*/){
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 			//sets the game to be player 2 
 			player_mode = 2 ; 
+
+			//start music 
+			playBackgroundTune(my_tune_notes,my_tune_times,3,0);
 			break;
 		}
 	}
@@ -655,4 +669,14 @@ void reset()
 	delay(10);//sleeps 1 second 
 	menu_start();
 	
+}
+
+
+//background music 
+void playBackgroundTune(uint32_t * notes, uint32_t * times, uint32_t count, uint32_t repeat)
+{
+	background_tune_notes=notes;
+	background_tune_times=times;
+	background_note_count=count;
+	background_tune_repeat=repeat;
 }
