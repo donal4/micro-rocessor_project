@@ -6,6 +6,7 @@
 //sound 
 #include "sound.h"
 #include "musical_notes.h"
+#include "serial.h"
 
 void initClock(void);
 void initSysTick(void);
@@ -46,7 +47,13 @@ void item_gen(int ,int ,int );
 
 volatile uint32_t milliseconds;
 
+
+//tune 
+
+
 // 				sprites 
+
+
 
 //player 1
 const uint16_t lilguy[]={0,0,0,0,0,38406,6663,22791,64263,37125,36612,0,0,0,0,0,0,0,0,0,0,45573,47623,64263,64263,55303,37637,0,0,0,0,0,0,0,0,0,0,65535,65519,65535,65231,57327,57343,0,0,0,0,0,0,0,0,5382,39175,14855,14343,46854,38919,63495,22279,13830,12292,0,0,0,0,0,0,0,0,7936,48648,7936,24072,7936,7936,0,0,0,0,0,0,512,0,0,16128,7936,7936,57096,23824,56840,7688,16128,0,0,1024,0,0,7936,0,7936,65032,43765,16383,48656,40712,40959,17917,7936,7936,0,0,0,0,24320,0,7936,7936,16103,16103,57096,40712,32495,32495,24320,7936,0,256,0,0,7936,7936,16128,7936,7936,24320,7936,65032,7936,7936,7936,7936,7936,7424,0,0,512,0,7936,16128,16896,512,512,512,8704,33536,7936,40448,0,6912,0,0,0,0,7936,32008,25344,512,56600,16128,17152,8704,24320,7936,0,6656,0,0,0,0,0,24320,7936,23816,7936,7936,7936,64784,7936,0,0,0,0,0,0,0,0,0,7936,16128,7936,7688,7936,7936,0,0,0,0,0,0,0,0,0,0,0,16128,0,0,65032,0,0,0,0,0,0,0,0,0,0,7936,7936,7936,0,0,7936,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,24320,7936,7936,0,0,0,0,          };
@@ -116,6 +123,9 @@ int main()
 	initSound();
 	//start menu 
 	menu_start();
+	//serial 
+	initSerial(); 
+
 
 
 	
@@ -596,35 +606,40 @@ void eputs(char *String)
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
 void p1_game_over(score){
-	// text 
-	printTextX2("Game", 10 ,10 ,RGBToWord(0xff,0xff,0), 0);
-	printTextX2("Over", 10 ,10 ,RGBToWord(0xff,0xff,0), 0);
-	printTextX2("score", 30, 10, RGBToWord(0xff,0xff,0), 0);
-    printNumberX2(score,30, 10, RGBToWord(0xff,0xff,0), 0);
-	
-	printText("Play again?", 10, 120, RGBToWord(0xff,0x0,0), 0);
-	printText("press down",10, 128, RGBToWord(0xff,0x0,0), 0); 
-	printText("Main Menu?",10, 128, RGBToWord(0xff,0x0,0), 0); 
-	
-
-	//characters 
-	putImage(80,100,16,16,superevilguy1,0,0);
-	putImage(40,100,16,16,lilguy,0,0);
-
-
-	__asm("wfi");
-	//play again 
-	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
-	{
-		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+	fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+	while(1){
+		// text 
+		printTextX2("Game", 20 ,10 ,RGBToWord(0xff,0xff,0), 0);
+		printTextX2("Over", 20 ,30 ,RGBToWord(0xff,0xff,0), 0);
+		printTextX2("score", 20, 50, RGBToWord(0xff,0xff,0), 0);
+		printNumberX2(score,20, 70, RGBToWord(0xff,0xff,0), 0);
+		
+		printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
+		printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
+		
 
 		
-	}
-	//menu 
-	else if ( (GPIOA->IDR & (1 << 11)) == 0)//down
-	{
-		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-	}
+
+		__asm("wfi");
+		//play again 
+		if ( (GPIOA->IDR & (1 << 8)) == 0)//up
+		{
+			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+
+			//add high score to the 
+			reset(); //starts the game again 
+		}
+		//menu 
+		else if ( (GPIOA->IDR & (1 << 4)) == 0)//right
+		{
+			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+
+			//sends score to pc 
+			eputs("\nplayer 1 high score:"); 
+			printDecimal(score);
+			reset(); // starts the game again 
+		}
+	}	
 }
 
 
