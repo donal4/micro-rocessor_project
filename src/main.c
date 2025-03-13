@@ -1,5 +1,4 @@
-
-//test 
+//main includes 
 #include <stm32f031x6.h>
 #include "display.h"
 
@@ -30,7 +29,7 @@ void p2_game_over(int);
 void reset(void);
 
 //random functions 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 ); 
+int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int , int ); 
 int random_y(void);
 int random_x(void);
 
@@ -46,14 +45,14 @@ void coins(int , int );
 void touch_evil(void); 
 
 //controls the movement of lilguy 
-void lil_guy_movement(void);
+void lil_guy_movement(int , int);
 
 volatile uint32_t milliseconds;
 
 
 //tune 
-uint32_t my_tune_notes[]={B5,A7,C4};
-uint32_t my_tune_times[]={1000,800,200};
+uint32_t my_tune_notes[]={C4,G4,E4};
+uint32_t my_tune_times[]={600,800,200};
 // Variables to handle background tunes
 uint32_t * background_tune_notes=0;
 uint32_t * background_tune_times;
@@ -125,17 +124,12 @@ int main()
 	initSysTick();
 	setupIO();
 	
-
 	//random x and y 
 	int randx = random_x();
 	int randy = random_y();
 	//random values for evilguy 
-	randomevil(x2 , y2 ,hmoved2, hinverted2, vmoved2 ,  vinverted2 );
+	randomevil(x2 , y2 ,hmoved2, hinverted2, vmoved2 ,  vinverted2 , oldx2 , oldy2);
 
-	//controls the movement for lilguy 
-	lil_guy_movement(); 
-	
-	
 	//sound 
 	initSound();
 
@@ -148,78 +142,39 @@ int main()
 	//Draws the coin onto the screen
 	item_gen(hinverted ,randy,randx);
 	//checks if the "lilguy" is inside the coin 
-	coins(randx, randy);
 	
+	//gameplay loop 
 	while(1)
 	{
+		//checks the health 	
 		health();
+		//shows the current score 
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
+
+
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
-		 
-
+		
 		//movement of superevilguy 
-		randomevil( x2 ,y2,  hmoved2,  hinverted2,  vmoved2 ,  vinverted2 );
+		randomevil( x2 ,y2,  hmoved2,  hinverted2,  vmoved2 ,  vinverted2 , oldx2 , oldy2);
+
+		//controls the movement for lilguy 
+		lil_guy_movement(oldx, oldy); 
 		
 		//test serial
 		printDecimal(score);
-
+		item_gen();
+		//checks if the character is touching a coin 
+		coins(randx, randy);
 		
 		
-		if ((vmoved) || (hmoved))
-		{
-			// only redraw if there has been some movement (reduces flicker)
-			fillRectangle(oldx,oldy,16,16,0);
-			oldx = x;
-			oldy = y;					
-			if (hmoved)
-			{
-				//draws charactar to the screen 
-				if (toggle)
-					putImage(x,y,16,16,lilguy,hinverted,0);
-				else
-					putImage(x,y,16,16,lilguy2,hinverted,0);
-				
-				toggle = toggle ^ 1;
-			}
-			else
-			{
-				//topdown lilguy 
-				putImage(x,y,12,16,lilguy4,0,vinverted);
-			}
-
-			
-
-			
-		//what is this @JamieC1255
-		if ((vmoved2) || (hmoved2))
-		{
-			// only redraw if there has been some movement (reduces flicker)
-			fillRectangle(oldx2,oldy2,16,16,0);
-			oldx2 = x2;
-			oldy2 = y2;					
-			if (hmoved2)
-			{
-				//draws charactar to the screen 
-				if (toggle2)
-					putImage(x2,y2,16,16,superevilguy1,hinverted2,0);
-				else
-					putImage(x2,y2,16,16,superevilguy2,hinverted2,0);
-				
-				toggle2 = toggle2 ^ 1;
-			}
-			else
-			{
-				putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
-			}
-		}
-		//why is this here? 
-		//delay(100);
+		//sleeps 10 seconds  
+		delay(100);
 	}
 	return 0;
 }
-}
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -383,56 +338,82 @@ int random_y(/*int , int*/){
 }
 
 //controls movement for "lil_guy"
-void lil_guy_movement(void){
-	
-		//Lilguy code
-		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
-		{					
-			if (x < 110)
-			{
-				x = x + 3;
-				hmoved = 1;
-				hinverted=0;
-			}						
-		}
-		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
-		{			
-			
-			if (x > 10)
-			{
-				x = x - 3;
-				hmoved = 1;
-				hinverted=1;
-			}			
-		}
-		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
-		{
-			if (y < 140)
-			{
-				y = y + 3;			
-				vmoved = 1;
-				vinverted = 0;
-			}
-		}
-		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
-		{			
-			if (y > 16)
-			{
-				y = y - 3;
-				vmoved = 1;
-				vinverted = 1;
-			}
-		}
-		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
-		{
-			reset();
-		}
+void lil_guy_movement(int oldx, int oldy){
 
+	//Lilguy code
+	if ((GPIOB->IDR & (1 << 4))==0) // right pressed
+	{					
+		if (x < 110)
+		{
+			x = x + 3;
+			hmoved = 1;
+			hinverted=0;
+		}						
+	}
+	if ((GPIOB->IDR & (1 << 5))==0) // left pressed
+	{				
+		if (x > 10)
+		{
+			x = x - 3;
+			hmoved = 1;
+			hinverted=1;
+		}			
+	}
+	if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
+	{
+		if (y < 140)
+		{
+			y = y + 3;			
+			vmoved = 1;
+			vinverted = 0;
+		}
+	}
+	if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
+	{			
+		if (y > 16)
+		{
+			y = y - 3;
+			vmoved = 1;
+			vinverted = 1;
+		}
+	}
+	if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
+	{
+		reset();
+	}
+
+	//drawing character to the screen (i think)
+	if ((vmoved) || (hmoved))
+		{
+			// only redraw if there has been some movement (reduces flicker)
+			fillRectangle(oldx,oldy,16,16,0);
+			oldx = x;
+			oldy = y;					
+			if (hmoved)
+			{
+				//draws charactar to the screen 
+				if (toggle)
+					putImage(x,y,16,16,lilguy,hinverted,0);
+				else
+					putImage(x,y,16,16,lilguy2,hinverted,0);
+				
+				toggle = toggle ^ 1;
+			}
+			else
+			{
+				//topdown lilguy 
+				putImage(x,y,12,16,lilguy4,0,vinverted);
+			}
+		
 }
-
+}
 //generates random movement for the evilguy 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 ){
+int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int oldx2 , int oldy2){
+	
+	//code for directions (random)
 	int randevil = rand() % 4 + 1 ;
+
+	//chooses which direction to move the "super evilguy "based off of the random int 
 	switch(randevil) {
 		case 1:
 			if (x2 < 110)
@@ -467,8 +448,32 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 			}
 		
 	}
+	
+		//what is this @JamieC1255
+		if ((vmoved2) || (hmoved2))
+		{
+			// only redraw if there has been some movement (reduces flicker)
+			fillRectangle(oldx2,oldy2,16,16,0);
+			oldx2 = x2;
+			oldy2 = y2;					
+			if (hmoved2)
+			{
+				//draws charactar to the screen 
+				if (toggle2)
+					putImage(x2,y2,16,16,superevilguy1,hinverted2,0);
+				else
+					putImage(x2,y2,16,16,superevilguy2,hinverted2,0);
+				
+				toggle2 = toggle2 ^ 1;
+			}
+			else
+			{
+				putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
+			}
+		}
 
-	return randevil;
+	//nolonger needed 
+	//return randevil;
 }
 
 void touch_evil(void){
@@ -545,14 +550,14 @@ void menu_start(){
 }
 
 //function to draw coin to the screen 
-void item_gen(hinverted ,randy,randx){
+void item_gen(int hinverted ,int randy,int randx){
 	//draws coin
 	//putImage(x,y,12,16,coin,0,0);//
 	putImage(randx,randy,16,16,coin,hinverted,0);
 }
 
 //checks if the character is in the coin 
-void coins(randx,randy){
+void coins(int randx,int randy){
 	
 	// Now check for an overlap by checking to see if ANY of the 4 corners of Coin are within the target area
 	if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )
@@ -643,10 +648,10 @@ void game_over(score){
 	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 	{
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-
-			//add high score to the 
-			//reset(); //starts the game again 
-			//break; // escapes the loop 
+		//prints the players score ro the screen 
+		eputs("\nplayer high score:");                         
+		printDecimal(score);
+			
 	}
 		//menu 
 	if ( (GPIOA->IDR & (1 << 4)) == 0)//right
@@ -654,10 +659,8 @@ void game_over(score){
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 
 			//sends score to pc 
-		eputs("\nplayer 1 high score:"); 
-		printDecimal(score);// sends the score to the terminal 
-			//reset(); // starts the game again 
-			//break; // escapes the loop 
+		eputs("\nplayer high score:"); 
+		printDecimal(score);
 	}
 	delay(30);//waits 3 seconds 
 
@@ -665,14 +668,14 @@ void game_over(score){
 		
 }
 
+//resets the game 
 void reset()
 {
-	fillRectangle(0,0,128,160,0x0);
+	fillRectangle(0,0,128,160,0x0);//fills screen with the colour black 
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
 	delay(10);//sleeps 1 second 
-	menu_start(); 
-	
+	menu_start(); //calls the main menu 
 }
 
 
