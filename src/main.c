@@ -29,7 +29,7 @@ void p2_game_over(int);
 void reset(void);
 
 //random functions 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int , int ); 
+int randomevil(uint16_t x2 ,uint16_t y2, uint16_t *hmoved2, uint16_t *hinverted2,uint16_t  *vmoved2 , uint16_t *vinverted2 , int , int ); 
 int random_y(void);
 int random_x(void);
 
@@ -113,6 +113,7 @@ int vmoved2 = 0;
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
+	//positioning variables 
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	uint16_t oldx2 = x2;
@@ -128,7 +129,7 @@ int main()
 	int randx = random_x();
 	int randy = random_y();
 	//random values for evilguy 
-	randomevil(x2 , y2 ,hmoved2, hinverted2, vmoved2 ,  vinverted2 , oldx2 , oldy2);
+	randomevil(x2 , y2 , &hmoved2, &hinverted2, &vmoved2 ,  &vinverted2 , oldx2 , oldy2);
 
 	//sound 
 	initSound();
@@ -153,6 +154,7 @@ int main()
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
 
 
+		//movement 
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
 		
@@ -164,7 +166,6 @@ int main()
 		
 		//test serial
 		printDecimal(score);
-		item_gen();
 		//checks if the character is touching a coin 
 		coins(randx, randy);
 		
@@ -172,6 +173,7 @@ int main()
 		//sleeps 10 seconds  
 		delay(100);
 	}
+	//exit code 
 	return 0;
 }
 
@@ -408,7 +410,7 @@ void lil_guy_movement(int oldx, int oldy){
 }
 }
 //generates random movement for the evilguy 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int oldx2 , int oldy2){
+int randomevil(uint16_t x2 ,uint16_t y2, uint16_t *hmoved2, uint16_t *hinverted2,uint16_t  *vmoved2 , uint16_t *vinverted2 , int oldx2 , int oldy2){
 	
 	//code for directions (random)
 	int randevil = rand() % 4 + 1 ;
@@ -418,12 +420,14 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 		case 1:
 			if (x2 < 110)
 			{
+				//moves charactar right 
 				x2 = x2 + 3;
 				hmoved2 = 1;
 				hinverted2=0;
 			}				
 			break;
 		case 2:
+			//left 
 			if (x2 > 10)
 			{
 				x2 = x2 - 3;
@@ -432,6 +436,7 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 			}				
 			break;
 		case 3:
+		//up 
 			if (y2 < 140)
 			{
 				y2 = y2 + 3;			
@@ -440,6 +445,7 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 			}
 			break;
 		case 4:
+		//down 
 			if (y2 > 16)
 			{
 				y2 = y2 - 3;
@@ -449,7 +455,7 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 		
 	}
 	
-		//what is this @JamieC1255
+		//movement for evilguy 
 		if ((vmoved2) || (hmoved2))
 		{
 			// only redraw if there has been some movement (reduces flicker)
@@ -468,6 +474,7 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 			}
 			else
 			{
+				//adds an image of the badguy 
 				putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
 			}
 		}
@@ -544,6 +551,7 @@ void menu_start(){
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 			{
+				//reset function 
 				reset();
 			}
 	}
@@ -562,7 +570,9 @@ void coins(int randx,int randy){
 	// Now check for an overlap by checking to see if ANY of the 4 corners of Coin are within the target area
 	if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )
 	{
+		//adds one to the score 
 		score+=1;
+
 		//play sound 
 		playNote(B6);//coin sound 
 		delay(10);//delay
@@ -572,19 +582,23 @@ void coins(int randx,int randy){
 		playNote(0);//stops sound
 
 
-		fillRectangle(randx,randy,16,16,0);
+		fillRectangle(randx,randy,16,16,0);// covers scren with black pixels 
 			
 
+		//resets the random x and y co -ords 
 		randx = random_x();
 		randy = random_y();
+
+		//calls the item gen function 
+		item_gen(hinverted ,randy,randx);
+
 		
-		putImage(randx,randy,16,16,coin,hinverted,0);
-			
 			
 	}		
 	
 }
 
+//function to check player health 
 void health(void){
 	while(1){
 		if(hp == 3){
@@ -643,8 +657,10 @@ void game_over(score){
 	//prompt 
 	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
 	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
+
 	__asm("wfi");//sleep 
-		//play again 
+	
+	//play again 
 	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 	{
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
@@ -663,7 +679,9 @@ void game_over(score){
 		printDecimal(score);
 	}
 	delay(30);//waits 3 seconds 
-
+	 
+	
+	__asm("wfi");//sleep 
 	reset(); // resets the game 
 		
 }
@@ -682,6 +700,7 @@ void reset()
 //background music 
 void playBackgroundTune(uint32_t * notes, uint32_t * times, uint32_t count, uint32_t repeat)
 {
+	//music functions 
 	background_tune_notes=notes;
 	background_tune_times=times;
 	background_note_count=count;
