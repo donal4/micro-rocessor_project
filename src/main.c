@@ -27,7 +27,7 @@ void initSerial();
 void reset(void);
 
 //main menu 
-void menu_start(void);
+void menu_start();
 void p1_game_over(int);
 void p2_game_over(int);
 
@@ -105,8 +105,7 @@ int main()
 	//random x and y 
 	int randx = random_x();
 	int randy = random_y();
-
-
+	//random values for evilguy 
 	int randevil = randomevil();
 
 	
@@ -120,17 +119,18 @@ int main()
 	uint16_t oldy = y;
 	uint16_t oldx2 = x2;
 	uint16_t oldy2 = y2;
-	//main menu call 
-	
 	
 	//startup 
 	initClock();
 	initSysTick();
 	setupIO();
+	
 	//sound 
 	initSound();
+
 	//start menu 
-	menu_start();
+	menu_start(&x ,  &y, &x2 , &y2 , &oldx, &oldy ,&oldx2, &oldy2);
+	
 	//serial 
 	initSerial(); 
 
@@ -155,7 +155,7 @@ int main()
 		hinverted = vinverted = 0;
 
 		//test serial
-		eputs(hp);
+		printDecimal(score);
 		//Lilguy code
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
@@ -259,9 +259,11 @@ int main()
 				putImage(x,y,12,16,lilguy4,0,vinverted);
 			}
 
-			//is character inside the evilguy
+			//is character touching any of the four corners of the evilguy
 			if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
 			{
+				//minus 1 life 
+				
 				//play sound 
 				playNote(B6);//coin sound 
 				delay(5);//delay
@@ -269,12 +271,14 @@ int main()
 				delay(10);//delay
 				playNote(0);//stops sound
 
-				
-
-				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
-
-				//minus 1 life 
 				hp--; 
+				health();//updates the lights relative to health 
+
+				//to do remove line when fixed 
+				/*
+				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
+				*/ 
+				
 			}
 
 			
@@ -343,7 +347,34 @@ void initSysTick(void)
 
 void SysTick_Handler(void)
 {
+	static int index = 0;
+	static int current_note_time=0;
 	milliseconds++;
+	if (background_tune_notes != 0)
+	{
+		if (current_note_time == 0)
+		{
+			index++;
+			if (index >= background_note_count)
+			{
+				if (background_tune_repeat != 0)
+				{
+					index = 0;
+				}
+				else
+				{
+					background_tune_notes=0;
+					playNote(0);
+				}
+			}
+			current_note_time = background_tune_times[index];
+			playNote(background_tune_notes[index]);
+		}
+		else
+		{
+			current_note_time--;
+		}
+	}
 }
 void initClock(void)
 {
@@ -474,11 +505,15 @@ int randomevil(){
 }
 
 
+void menu_start(){
+	//positioning 
 
-void menu_start(/*menu_image*/){
 	//loop for menu 
 	while (1)
 	{	
+		//start music 
+		playBackgroundTune(my_tune_notes,my_tune_times,3,0);
+
 		//				gui
 		//text
 		printTextX2("lilguy", 30, 10, RGBToWord(0xff,0xff,0), 0);
@@ -493,7 +528,7 @@ void menu_start(/*menu_image*/){
 		putImage(40,100,16,16,lilguy,0,0);
 
 
-		__asm("wfi");
+		__asm("wfi");//sleep 
 		//player 1 
 		if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 		{
@@ -501,73 +536,85 @@ void menu_start(/*menu_image*/){
 			//sets the game to be player 1 
 			player_mode = 1; 
 
-			//start music 
-			playBackgroundTune(my_tune_notes,my_tune_times,3,0);
+			//stop music 
+			playNote(0);
+
+			//escape the loop 
 			break;
 		}
 		//player 2 
-		else if ( (GPIOA->IDR & (1 << 11)) == 0)//down
+		if ( (GPIOA->IDR & (1 << 11)) == 0)//down
 		{
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 			//sets the game to be player 2 
 			player_mode = 2 ; 
 
-			//start music 
-			playBackgroundTune(my_tune_notes,my_tune_times,3,0);
+			//stop music 
+			playNote(0);
+				
+				
+
+
+			//escape the loop 
 			break;
 		}
+		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
+			{
+				reset();
+			}
 	}
-
 }
 
-
 void item_gen(hinverted ,randy,randx){
-
 	//draws coin
 	//putImage(x,y,12,16,coin,0,0);//
 	putImage(randx,randy,16,16,coin,hinverted,0);
-
-
-	 
 }
 
-void health(){
-	if(hp == 3){
+void health(void){
+	while(1){
+		if(hp == 3){
 
-		GPIOA->ODR = GPIOA->ODR| (1<<2);
+			GPIOA->ODR = GPIOA->ODR| (1<<2);
 
-		GPIOA->ODR = GPIOA->ODR| (1<<1);
+			GPIOA->ODR = GPIOA->ODR| (1<<1);
 
-		GPIOA->ODR = GPIOA->ODR| (1 <<3);
-	}
-	else if(hp == 2){
-
-		GPIOA->ODR = GPIOA->ODR| (0<<2);
-
-		GPIOA->ODR = GPIOA->ODR| (1<<1);
-
-		GPIOA->ODR = GPIOA->ODR| (1 <<3);
-	}
-	else if(hp == 1){
-
-		GPIOA->ODR = GPIOA->ODR| (0<<2);
-
-		GPIOA->ODR = GPIOA->ODR| (0<<1);
-
-		GPIOA->ODR = GPIOA->ODR| (1 <<3);
-	}
-	else if(hp == 0){
-
-		GPIOA->ODR = GPIOA->ODR| (0<<2);
-
-		GPIOA->ODR = GPIOA->ODR| (0<<1);
-
-		GPIOA->ODR = GPIOA->ODR| (0 <<3);
-		if(player_mode == 1 ){
-			p1_game_over(score);
+			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			break; 
 		}
-		else if(player_mode == 2 ){
-			p1_game_over(score);
+		if(hp == 2){
+
+			GPIOA->ODR = GPIOA->ODR| (0<<2);
+
+			GPIOA->ODR = GPIOA->ODR| (1<<1);
+
+			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			break;
+		}
+		if(hp == 1){
+
+			GPIOA->ODR = GPIOA->ODR| (0<<2);
+
+			GPIOA->ODR = GPIOA->ODR| (0<<1);
+
+			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			break;
+		}
+		if(hp == 0){
+
+			GPIOA->ODR = GPIOA->ODR| (0<<2);
+
+			GPIOA->ODR = GPIOA->ODR| (0<<1);
+
+			GPIOA->ODR = GPIOA->ODR| (0<<3);
+			//if player 1 
+			if(player_mode == 1 ){
+
+				p1_game_over(score);
+			}
+			if(player_mode == 2 ){
+				p2_game_over(score);
+			}
 		}
 	}
 
@@ -620,40 +667,43 @@ void eputs(char *String)
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
 void p1_game_over(score){
-	fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-	while(1){
-		// text 
-		printTextX2("Game", 20 ,10 ,RGBToWord(0xff,0xff,0), 0);
-		printTextX2("Over", 20 ,30 ,RGBToWord(0xff,0xff,0), 0);
-		printTextX2("score", 20, 50, RGBToWord(0xff,0xff,0), 0);
-		printNumberX2(score,20, 70, RGBToWord(0xff,0xff,0), 0);
-		
-		printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
-		printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
-		
-
-		
-
-		__asm("wfi");
+	//fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+	//loop for menu 
+	
+	// text 
+	printTextX2("Game", 20 ,10 ,RGBToWord(0xff,0xff,0), 0);
+	printTextX2("Over", 20 ,30 ,RGBToWord(0xff,0xff,0), 0);
+	printTextX2("score", 20, 50, RGBToWord(0xff,0xff,0), 0);
+	printNumberX2(score,20, 70, RGBToWord(0xff,0xff,0), 0);
+	
+	//prompt 
+	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
+	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
+	__asm("wfi");//sleep 
 		//play again 
-		if ( (GPIOA->IDR & (1 << 8)) == 0)//up
-		{
-			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
+	{
+		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 
 			//add high score to the 
-			reset(); //starts the game again 
-		}
+			//reset(); //starts the game again 
+			//break; // escapes the loop 
+	}
 		//menu 
-		else if ( (GPIOA->IDR & (1 << 4)) == 0)//right
-		{
-			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+	if ( (GPIOA->IDR & (1 << 4)) == 0)//right
+	{
+		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 
 			//sends score to pc 
-			eputs("\nplayer 1 high score:"); 
-			printDecimal(score);
-			reset(); // starts the game again 
-		}
-	}	
+		eputs("\nplayer 1 high score:"); 
+		printDecimal(score);// sends the score to the terminal 
+			//reset(); // starts the game again 
+			//break; // escapes the loop 
+	}
+	delay(30);//waits 3 seconds 
+
+	reset(); // resets the game 
+		
 }
 
 
@@ -667,7 +717,7 @@ void reset()
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
 	delay(10);//sleeps 1 second 
-	menu_start();
+	menu_start(); 
 	
 }
 
