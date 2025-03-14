@@ -16,19 +16,17 @@ void setupIO();
 
 //serial 
 void initSerial();
-
+void health(); 
 //sound 
 //void playNote(uint32_t Freq);
 //void initSound(void);
 
-//menu 
-
 //Reset
-void reset(void);
+void reset(int hinverted ,int randx,int randy );
 
 //main menu 
-void menu_start();
-void game_over(int score);
+void menu_start(int hinverted ,int randx,int randy );
+void game_over(int score ,int hinverted ,int randx,int randy );
 
 
 //random functions 
@@ -135,7 +133,7 @@ int main()
 	initSound();
 
 	//start menu 
-	menu_start(/*&x ,  &y, &x2 , &y2 , &oldx, &oldy ,&oldx2, &oldy2*/);
+	menu_start(hinverted ,randy,randx);
 	
 	//serial 
 	initSerial(); 
@@ -203,7 +201,7 @@ int main()
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 		{
-			reset();
+			reset(hinverted ,randy,randx);
 		}
 
 		
@@ -578,8 +576,9 @@ int randomevil(){
 	return randevil;
 }
 
-void menu_start(){
+void menu_start(int hinverted ,int randx,int randy ){
 	//positioning 
+
 
 	//loop for menu 
 	while (1)
@@ -631,7 +630,7 @@ void menu_start(){
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 			{
 				//reset function 
-				reset();
+				reset(hinverted ,randy,randx);
 			}
 	}
 }
@@ -718,7 +717,7 @@ void health(void){
 }	
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
-void game_over(score){
+void game_over(int score ,int hinverted ,int randx,int randy ){
 	delay(500);
 	fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 	//loop for menu 
@@ -732,13 +731,13 @@ void game_over(score){
 	
 	delay(6000);
 	
-	reset(); // resets the game 
+	reset(hinverted ,randy,randx); // resets the game 
 	
 		
 }
 
 
-void reset()
+void reset(int hinverted ,int randx,int randy )
 {
 	fillRectangle(0,0,128,160,0x0);
 	hp = 3; //resets health
@@ -751,6 +750,7 @@ void reset()
 	y= 50 ; 
 	x2 = 100; 
 	y2 = 100 ; 
+	item_gen(hinverted ,randy,randx);
 
 }
 
