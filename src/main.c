@@ -162,9 +162,9 @@ int main()
 	putImage(x2,y2,16,16,superevilguy1,hinverted,0);
 	
 	//light test 
-	//pinMode(GPIOA,1,1);
-	//GPIOA->ODR = 1;
-	//putImage(0,0,12,16,dg1,0,0);
+	pinMode(GPIOA,1,1);
+	pinMode(GPIOA,2 , 1);
+	pinMode(GPIOA,3 , 1);
 	
 	while(1)
 	{
@@ -581,7 +581,7 @@ void menu_start(int randx,int randy ){
 		delay(1000);//sleep
 		playNote(B3);
 		delay(1000); //sleep
-		playNote(0)//stop
+		playNote(0);//stop
 
 		//				gui
 		//text
@@ -631,38 +631,38 @@ void health(int randx,int randy){
 	while(1){
 		if(hp == 3){
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<2);//on
+			GPIOA->ODR|= (1<<2);//on
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<1);//on
+			GPIOA->ODR|= (1<<1);//on
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<3);//on
+			GPIOA->ODR|= (1<<3);//on
 			break; 
 		}
 		if(hp == 2){
 
-			GPIOA->ODR = GPIOA->ODR &= ~(0<<2);//off
+			GPIOA->ODR &= ~(0<<2);//off
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<1);//on
+			GPIOA->ODR|= (1<<1);//on
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<3);//on
+			GPIOA->ODR|= (1<<3);//on
 			break;
 		}
 		if(hp == 1){
 
-			GPIOA->ODR = GPIOA->ODR &= ~(0<<2);//off
+			GPIOA->ODR &= ~(0<<2);//off
 
-			GPIOA->ODR = GPIOA->ODR &= ~(0<<1);//off
+			GPIOA->ODR &= ~(0<<1);//off
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<3);//on
+			GPIOA->ODR|= (1<<3);//on
 			break;
 		}
 		if(hp == 0){
 
-			GPIOA->ODR = GPIOA->ODR &= ~(0<<2);//off
+			GPIOA->ODR &= ~(0<<2);//off
 
-			GPIOA->ODR = GPIOA->ODR &= ~(0<<1);//off
+			GPIOA->ODR &= ~(0<<1);//off
 
-			GPIOA->ODR = GPIOA->ODR &= ~(0<<3);//off
+			GPIOA->ODR &= ~(0<<3);//off
 			
 			//ends the game 
 			game_over(randx , randy);
