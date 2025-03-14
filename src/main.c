@@ -94,7 +94,7 @@ int main()
 {
 	//variables 
 
-	int difficulty;
+	int difficulty = 1;
 
 	int hinverted = 0;
 	int vinverted = 0;
