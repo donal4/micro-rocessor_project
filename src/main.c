@@ -594,8 +594,8 @@ void menu_start(){
 		printTextX2("super evil", 10, 50, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("guy", 47, 70, RGBToWord(0xff,0xff,0), 0);
 
-		printText("up start P1", 10, 120, RGBToWord(0xff,0x0,0), 0);
-		printText("down start p2",10, 128, RGBToWord(0xff,0x0,0), 0); 
+		printText("press up to ", 10, 120, RGBToWord(0xff,0x0,0), 0);
+		printText("start! ",10, 128, RGBToWord(0xff,0x0,0), 0); 
 		//characters 
 		putImage(80,100,16,16,superevilguy1,0,0);
 		putImage(40,100,16,16,lilguy,0,0);
