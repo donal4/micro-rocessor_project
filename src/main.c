@@ -24,14 +24,11 @@ void initSerial();
 //menu 
 
 //Reset
-void reset(uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2);
-
-//checks the player health 
-void health(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2);
+void reset(void);
 
 //main menu 
-void menu_start(uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2);
-void game_over(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2);
+void menu_start();
+void game_over(int score);
 
 
 //random functions 
@@ -133,7 +130,7 @@ int main()
 	initSound();
 
 	//start menu 
-	menu_start(x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2);
+	menu_start(/*&x ,  &y, &x2 , &y2 , &oldx, &oldy ,&oldx2, &oldy2*/);
 	
 	//serial 
 	initSerial(); 
@@ -143,9 +140,7 @@ int main()
 	
 	//Draws the coin onto the screen
 	item_gen(hinverted ,randy,randx);
-
 	putImage(x2,y2,16,16,superevilguy1,hinverted,0);
-
 	
 	//light test 
 	//pinMode(GPIOA,1,1);
@@ -154,7 +149,7 @@ int main()
 	
 	while(1)
 	{
-		//health(score,  &x,  &y,  &x2 ,  &y2 ,  &oldx ,  &oldy ,  oldx2 ,  oldy2);
+		health();
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
 		hmoved = vmoved = 0;
@@ -203,7 +198,7 @@ int main()
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 		{
-			reset(x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2);
+			reset();
 		}
 
 		int randevilcount;
@@ -307,7 +302,7 @@ int main()
 				playNote(0);//stops sound
 
 				hp--; 
-				health(score,  x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2);//updates the lights relative to health 
+				health();//updates the lights relative to health 
 
 				//to do remove line when fixed 
 				/*
@@ -538,7 +533,7 @@ int randomevil(){
 	return randevil;
 }
 
-void menu_start(uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2){
+void menu_start(){
 	//positioning 
 
 	//loop for menu 
@@ -591,7 +586,7 @@ void menu_start(uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t old
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 			{
 				//reset function 
-				reset(x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2);
+				reset();
 			}
 	}
 }
@@ -632,48 +627,49 @@ void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 
 	}		
 }
-void health(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2){
+void health(void){
 	while(1){
 		if(hp == 3){
 
-			GPIOA->ODR = GPIOA->ODR || (1<<2); //first light 
+			GPIOA->ODR = GPIOA->ODR| (1<<2);
 
-			GPIOA->ODR = GPIOA->ODR || (1<<1);//second light 
+			GPIOA->ODR = GPIOA->ODR| (1<<1);
 
-			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
+			GPIOA->ODR = GPIOA->ODR| (1<<3);
 			break; 
 		}
 		if(hp == 2){
 
-			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
+			GPIOA->ODR = GPIOA->ODR| (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR || (1<<1);//second light 
+			GPIOA->ODR = GPIOA->ODR| (1<<1);
 
-			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
-			break; 
+			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			break;
 		}
 		if(hp == 1){
 
+			GPIOA->ODR = GPIOA->ODR| (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
+			GPIOA->ODR = GPIOA->ODR| (0<<1);
 
-			GPIOA->ODR = GPIOA->ODR || (0<<1);//second light 
-
-			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
-			break; 	
+			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			break;
 		}
 		if(hp == 0){
 
-			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
+			GPIOA->ODR = GPIOA->ODR| (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR || (0<<1);//second light 
+			GPIOA->ODR = GPIOA->ODR| (0<<1);
 
-			GPIOA->ODR = GPIOA->ODR ||  (0<<3); //third light 
-
+			GPIOA->ODR = GPIOA->ODR| (0<<3);
 			//if player 1 
 			if(player_mode == 1 ){
 
-				game_over(score, x, y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2);
+				game_over(score);
+			}
+			if(player_mode == 2 ){
+				game_over(score);
 			}
 		}
 	}
@@ -681,8 +677,9 @@ void health(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint1
 }	
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
-void game_over(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2){
-	//fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+void game_over(score){
+	delay(500);
+	fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 	//loop for menu 
 	
 	// text 
@@ -705,7 +702,7 @@ void game_over(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , ui
 		eputs("\nplayer high score:");                         
 		printDecimal(score);
 
-		reset(x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2); // resets the game 
+		reset(); // resets the game 
 			
 	}
 		//menu 
@@ -717,34 +714,20 @@ void game_over(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , ui
 		eputs("\nplayer high score:"); 
 		printDecimal(score);
 
-		reset(x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2); // resets the game 
+		reset(); // resets the game 
 	}
 	
-	__asm("wfi");//sleep 
-	reset(x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2);// resets the game 
 		
 }
 
 
-void reset(uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2)
+void reset()
 {
 	fillRectangle(0,0,128,160,0x0);
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
-	delay(10);//sleeps 1 second 
-	
-	//resets positioning 
-	x = 50;
-	y = 50;
-	x2 = 100;
-	y2 = 100;
-	oldx = x;
-	oldy = y;
-	oldx2 = x2;
-	oldy2 = y2;
-
-	//calls the main menu 
-	menu_start(x,  y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2); 
+	delay(1000);//sleeps 1 second 
+	menu_start(); 
 	
 }
 
