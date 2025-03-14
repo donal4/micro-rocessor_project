@@ -627,54 +627,54 @@ void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 
 	}		
 }
-void health(void){
+
+void health(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2){
 	while(1){
 		if(hp == 3){
 
-			GPIOA->ODR = GPIOA->ODR| (1<<2);
+			GPIOA->ODR = GPIOA->ODR || (1<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR| (1<<1);
+			GPIOA->ODR = GPIOA->ODR || (1<<1);//second light 
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
 			break; 
 		}
 		if(hp == 2){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR| (1<<1);
+			GPIOA->ODR = GPIOA->ODR || (1<<1);//second light 
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
-			break;
+			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
+			break; 
 		}
 		if(hp == 1){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (0<<1);
+			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
-			break;
+			GPIOA->ODR = GPIOA->ODR || (0<<1);//second light 
+
+			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
+			break; 	
 		}
 		if(hp == 0){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR| (0<<1);
+			GPIOA->ODR = GPIOA->ODR || (0<<1);//second light 
 
-			GPIOA->ODR = GPIOA->ODR| (0<<3);
+			GPIOA->ODR = GPIOA->ODR ||  (0<<3); //third light 
+
 			//if player 1 
 			if(player_mode == 1 ){
 
-				game_over(score);
-			}
-			if(player_mode == 2 ){
-				game_over(score);
+				game_over(score, x, y,  x2 ,  y2 ,  oldx ,  oldy ,  oldx2 ,  oldy2);
 			}
 		}
 	}
 
-}	
+}		
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
 void game_over(score){
