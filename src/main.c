@@ -16,19 +16,17 @@ void setupIO();
 
 //serial 
 void initSerial();
-
+void health(int score ,int hinverted ,int randx,int randy); 
 //sound 
 //void playNote(uint32_t Freq);
 //void initSound(void);
 
-//menu 
-
 //Reset
-void reset(void);
+void reset(int hinverted ,int randx,int randy );
 
 //main menu 
-void menu_start();
-void game_over(int score);
+void menu_start(int hinverted ,int randx,int randy );
+void game_over(int score ,int hinverted ,int randx,int randy );
 
 
 //random functions 
@@ -134,7 +132,7 @@ int main()
 	initSound();
 
 	//start menu 
-	menu_start(/*&x ,  &y, &x2 , &y2 , &oldx, &oldy ,&oldx2, &oldy2*/);
+	menu_start(hinverted ,randy,randx);
 	
 	//serial 
 	initSerial(); 
@@ -153,7 +151,7 @@ int main()
 	
 	while(1)
 	{
-		health();
+		health( score , hinverted , randx, randy);
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
 		hmoved = vmoved = 0;
@@ -202,7 +200,7 @@ int main()
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 		{
-			reset();
+			reset(hinverted ,randy,randx);
 		}
 
 		
@@ -373,7 +371,7 @@ int main()
 				x2 = 100;
 				y2 = 100;
 				hp--; //takes 1 health 
-				health();//updates the lights relative to health 
+				health( score , hinverted , randx, randy);//updates the lights relative to health 
 
 				//to do remove line when fixed 
 				/*
@@ -577,8 +575,9 @@ int randomevil(){
 	return randevil;
 }
 
-void menu_start(){
+void menu_start(int hinverted ,int randx,int randy ){
 	//positioning 
+
 
 	//loop for menu 
 	while (1)
@@ -593,8 +592,8 @@ void menu_start(){
 		printTextX2("super evil", 10, 50, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("guy", 47, 70, RGBToWord(0xff,0xff,0), 0);
 
-		printText("up start P1", 10, 120, RGBToWord(0xff,0x0,0), 0);
-		printText("down start p2",10, 128, RGBToWord(0xff,0x0,0), 0); 
+		printText("press up to ", 10, 120, RGBToWord(0xff,0x0,0), 0);
+		printText("start! ",10, 128, RGBToWord(0xff,0x0,0), 0); 
 		//characters 
 		putImage(80,100,16,16,superevilguy1,0,0);
 		putImage(40,100,16,16,lilguy,0,0);
@@ -630,7 +629,7 @@ void menu_start(){
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 			{
 				//reset function 
-				reset();
+				reset(hinverted ,randy,randx);
 			}
 	}
 }
@@ -671,57 +670,53 @@ void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 
 	}		
 }
-void health(void){
+void health(int score ,int hinverted ,int randx,int randy){
 	while(1){
 		if(hp == 3){
 
-			GPIOA->ODR = GPIOA->ODR| (1<<2);
+			GPIOA->ODR = GPIOA->ODR|= (1<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<1);
+			GPIOA->ODR = GPIOA->ODR|= (1<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);
 			break; 
 		}
 		if(hp == 2){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR|= (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<1);
+			GPIOA->ODR = GPIOA->ODR|= (1<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);
 			break;
 		}
 		if(hp == 1){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR|= (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (0<<1);
+			GPIOA->ODR = GPIOA->ODR|= (0<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);
 			break;
 		}
 		if(hp == 0){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR|= (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (0<<1);
+			GPIOA->ODR = GPIOA->ODR|= (0<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (0<<3);
-			//if player 1 
-			if(player_mode == 1 ){
-
-				game_over(score);
-			}
-			if(player_mode == 2 ){
-				game_over(score);
-			}
+			GPIOA->ODR = GPIOA->ODR|= (0<<3);
+			
+			//ends the game 
+			game_over(score, hinverted , randx , randy);
+			
 		}
 	}
 
 }	
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
-void game_over(score){
+void game_over(int score ,int hinverted ,int randx,int randy ){
 	delay(500);
 	fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 	//loop for menu 
@@ -732,31 +727,29 @@ void game_over(score){
 	printTextX2("score", 20, 50, RGBToWord(0xff,0xff,0), 0);
 	printNumberX2(score,20, 70, RGBToWord(0xff,0xff,0), 0);
 	
-	//prompt 
-	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
-	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
-
+	
 	delay(6000);
 	
-	reset(); // resets the game 
+	reset(hinverted ,randy,randx); // resets the game 
 	
 		
 }
 
 
-void reset()
+void reset(int hinverted ,int randx,int randy )
 {
 	fillRectangle(0,0,128,160,0x0);
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
 	delay(1000);//sleeps 1 second 
-	menu_start(); 
+	menu_start( hinverted , randx, randy ); 
 
 	//should reset the lilguy and superevilguy 
 	x = 50 ; 
 	y= 50 ; 
 	x2 = 100; 
 	y2 = 100 ; 
+	item_gen(hinverted ,randy,randx);
 
 }
 
