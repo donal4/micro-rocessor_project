@@ -289,28 +289,6 @@ int main()
 				putImage(x,y,12,16,lilguy4,0,vinverted);
 			}
 
-			//is character touching any of the four corners of the evilguy
-			if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
-			{
-				//minus 1 life 
-				
-				//play sound 
-				playNote(B6);//coin sound 
-				delay(5);//delay
-				playNote(B7);//octave above 
-				delay(10);//delay
-				playNote(0);//stops sound
-
-				hp--; 
-				health();//updates the lights relative to health 
-
-				//to do remove line when fixed 
-				/*
-				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
-				*/ 
-				
-			}
-
 			
 			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
 			if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )
@@ -338,7 +316,58 @@ int main()
 				putImage(randx,randy,16,16,coin,hinverted,0);
 				
 			}
-		}		
+		}	
+		
+		if ((vmoved2) || (hmoved2)){
+		if (isInside(randx,randy,16,16,x2,y2) || isInside(randx,randy,16,16,x2+16,y2) || isInside(randx,randy,16,16,x2,y2+16) || isInside(randx,randy,16,16,x2+16,y2+16) )
+			{
+				score--;
+				//play sound 
+				playNote(B6);//coin sound 
+				delay(10);//delay
+				playNote(B7);//octave above 
+				delay(10);//delay
+				delay(10);//delay
+				playNote(0);//stops sound
+
+				/*
+				int oldrandx = randx;
+				int oldrandy = randy;
+				*/
+
+				fillRectangle(randx,randy,16,16,0);
+				
+
+				randx = random_x();
+				randy = random_y();
+
+				putImage(randx,randy,16,16,coin,hinverted,0);
+				
+			}
+
+			//is character touching any of the four corners of the evilguy
+			if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
+			{
+				//minus 1 life 
+				
+				//play sound 
+				playNote(B6);//coin sound 
+				delay(5);//delay
+				playNote(B7);//octave above 
+				delay(10);//delay
+				playNote(0);//stops sound
+
+				hp--; 
+				health();//updates the lights relative to health 
+
+				//to do remove line when fixed 
+				/*
+				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
+				*/ 
+				
+			}
+		}
+
 		if ((vmoved2) || (hmoved2))
 		{
 			// only redraw if there has been some movement (reduces flicker)
@@ -692,30 +721,9 @@ void game_over(score){
 	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
 	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
 
-	delay(3000);
+	delay(6000);
 	
-	//play again 
-	if ( (GPIOA->IDR & (1 << 8)) == 1)//up
-	{
-		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-		//prints the players score ro the screen 
-		eputs("\nplayer high score:");                         
-		printDecimal(score);
-
-		reset(); // resets the game 
-			
-	}
-		//menu 
-	if ( (GPIOA->IDR & (1 << 4)) == 1)//right
-	{
-		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-
-			//sends score to pc 
-		eputs("\nplayer high score:"); 
-		printDecimal(score);
-
-		reset(); // resets the game 
-	}
+	reset(); // resets the game 
 	
 		
 }
