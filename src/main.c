@@ -78,7 +78,7 @@ const uint16_t superevilguy2[] = {0,0,0,0,0,4912,4912,4912,4912,4912,4912,0,0,0,
 const uint16_t coin[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8191,32767,8191,55758,1321,17441,57344,0,0,0,0,0,0,0,40695,40431,38917,14853,63749,13828,54276,63749,8720,24576,0,0,0,0,0,24311,55045,14597,32239,15062,7663,0,38917,23045,6661,33032,0,0,0,0,0,15855,6149,23302,40695,54788,30469,0,47109,39942,47621,8192,0,0,0,0,56022,0,64005,64005,56815,62980,62468,0,6149,55557,5380,8192,0,0,0,0,31975,0,22533,15110,56551,22277,30725,0,39173,15110,38661,8192,0,0,0,0,39902,0,39173,22789,15855,23045,30981,0,63749,14597,38917,16384,0,0,0,0,23518,0,22789,30469,48887,23045,38661,0,22789,56069,14597,0,0,0,0,0,57079,0,39173,55045,31446,54532,6661,0,47109,6405,62980,0,0,0,0,0,24047,0,55813,38917,47830,13316,62724,0,31237,23045,63237,0,0,0,0,50209,0,32239,22789,39173,7927,37123,28931,0,47365,56069,38661,0,0,0,0,0,49944,7663,64005,6405,0,0,0,0,63749,30725,0,0,0,0,0,0,9513,0,40695,30469,6661,14853,38917,31237,39173,54788,0,0,0,0,0,0,0,17441,0,0,30725,38917,6149,46853,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
 
 //global var 
-int difficulty = 1;
+int difficulty = 0;
 int hp = 3; 
 //player score 
 int score = 0;
@@ -105,18 +105,34 @@ int toggle2 = 0;
 int hmoved2 = 0;
 int vmoved2 = 0;
 
-uint16_t x = 50;
-uint16_t y = 50;
-uint16_t x2 = 100;
-uint16_t y2 = 100;
+
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
 	//variables 
 
 	
-	eputs("\n\n\nEnter difficulty: \n easy (1) hard(2)");
-	egetchar();
+	//selects the difficulty bassed off of response 
+	if (difficulty == 0){
+
+		// prompts the user 
+		eputs("\n\n\nEnter difficulty: \n easy (e) hard(h)");
+
+		//takes the user input 
+		char check = egetchar(); 
+
+		//easy 
+		if(check == 'e'){
+			difficulty = 1 ;  
+			eputs("\n\ndifficulty is easy!\n\n");
+		}
+		//hard 
+		else{
+			difficulty = 2; 
+			eputs("\n\ndifficulty is hard!\n\n");
+		}
+	}
+	
 
 
 	//random x and y 
@@ -618,6 +634,7 @@ void menu_start(int randx,int randy ){
 			//stop music 
 			playNote(0);
 
+			//prints coin to the screen 
 			
 			//escape the loop 
 			break;
@@ -737,6 +754,11 @@ void game_over(int randx,int randy ){
 void reset(int randx,int randy )
 {
 	fillRectangle(0,0,128,160,0x0);
+
+	//sends the users highscore to serial 
+	eputs("\n\nhigh score!"); 
+	printDecimal(score);
+
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
 	//should reset the lilguy and superevilguy 
