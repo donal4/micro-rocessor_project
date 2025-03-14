@@ -30,7 +30,6 @@ void reset(void);
 void menu_start();
 void game_over(int score);
 
-
 //random functions 
 int randomevil(void); 
 int random_y(void);
@@ -47,6 +46,9 @@ void item_gen(int hinverted ,int randx,int randy );
 void coins(int randx , int randy , uint16_t x , uint16_t y ,int hinverted);
 
 volatile uint32_t milliseconds;
+
+//checks health 
+void health(void); 
 
 
 //tune 
@@ -81,9 +83,16 @@ const uint16_t coin[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8191,32767,81
 
 //global var 
 int hp = 3; 
+uint16_t x = 50;
+uint16_t y = 50;
+uint16_t x2 = 100;
+uint16_t y2 = 100;
+
 //player score 
 int score = 0;
-int player_mode; 
+int difficulty;
+
+
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
@@ -112,10 +121,7 @@ int main()
 	
 	
 	//positioning 
-	uint16_t x = 50;
-	uint16_t y = 50;
-	uint16_t x2 = 100;
-	uint16_t y2 = 100;
+	
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	uint16_t oldx2 = x2;
@@ -549,8 +555,8 @@ void menu_start(){
 		printTextX2("super evil", 10, 50, RGBToWord(0xff,0xff,0), 0);
 		printTextX2("guy", 47, 70, RGBToWord(0xff,0xff,0), 0);
 
-		printText("up start P1", 10, 120, RGBToWord(0xff,0x0,0), 0);
-		printText("down start p2",10, 128, RGBToWord(0xff,0x0,0), 0); 
+		printText("press up ", 10, 120, RGBToWord(0xff,0x0,0), 0);
+		printText("to start!",10, 128, RGBToWord(0xff,0x0,0), 0); 
 		//characters 
 		putImage(80,100,16,16,superevilguy1,0,0);
 		putImage(40,100,16,16,lilguy,0,0);
@@ -562,24 +568,10 @@ void menu_start(){
 		{
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 			//sets the game to be player 1 
-			player_mode = 1; 
 
 			//stop music 
 			playNote(0);
 
-			//escape the loop 
-			break;
-		}
-		//player 2 
-		if ( (GPIOA->IDR & (1 << 11)) == 0)//down
-		{
-			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-			//sets the game to be player 2 
-			player_mode = 2 ; 
-
-			//stop music 
-			playNote(0);
-				
 			//escape the loop 
 			break;
 		}
@@ -628,7 +620,7 @@ void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 	}		
 }
 
-void health(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint16_t oldx , uint16_t oldy , uint16_t oldx2 , uint16_t oldy2){
+void health(void){
 	while(1){
 		if(hp == 3){
 
