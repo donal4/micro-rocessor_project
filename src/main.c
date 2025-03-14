@@ -16,7 +16,7 @@ void setupIO();
 
 //serial 
 void initSerial();
-void health(); 
+void health(int score ,int hinverted ,int randx,int randy); 
 //sound 
 //void playNote(uint32_t Freq);
 //void initSound(void);
@@ -152,7 +152,7 @@ int main()
 	
 	while(1)
 	{
-		health();
+		health( score , hinverted , randx, randy);
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
 		hmoved = vmoved = 0;
@@ -372,7 +372,7 @@ int main()
 				x2 = 100;
 				y2 = 100;
 				hp--; //takes 1 health 
-				health();//updates the lights relative to health 
+				health( score , hinverted , randx, randy);//updates the lights relative to health 
 
 				//to do remove line when fixed 
 				/*
@@ -671,7 +671,7 @@ void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 
 	}		
 }
-void health(void){
+void health(int score ,int hinverted ,int randx,int randy){
 	while(1){
 		if(hp == 3){
 
@@ -709,7 +709,7 @@ void health(void){
 			GPIOA->ODR = GPIOA->ODR|= (0<<3);
 			
 			//ends the game 
-			game_over(score);
+			game_over(score, hinverted , randx , randy);
 			
 		}
 	}
@@ -743,7 +743,7 @@ void reset(int hinverted ,int randx,int randy )
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
 	delay(1000);//sleeps 1 second 
-	menu_start(); 
+	menu_start( hinverted , randx, randy ); 
 
 	//should reset the lilguy and superevilguy 
 	x = 50 ; 
