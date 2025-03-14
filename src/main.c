@@ -16,17 +16,17 @@ void setupIO();
 
 //serial 
 void initSerial();
-void health(int score ,int hinverted ,int randx,int randy); 
+void health(int randx,int randy); 
 //sound 
-//void playNote(uint32_t Freq);
-//void initSound(void);
+void playNote(uint32_t Freq);
+void initSound(void);
 
 //Reset
-void reset(int hinverted ,int randx,int randy );
+void reset(int randx,int randy );
 
 //main menu 
-void menu_start(int hinverted ,int randx,int randy );
-void game_over(int score ,int hinverted ,int randx,int randy );
+void menu_start(int randx,int randy );
+void game_over(int randx,int randy );
 
 
 //random functions 
@@ -41,7 +41,7 @@ int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
-void item_gen(int hinverted ,int randx,int randy );
+void item_gen(int randx,int randy );
 void coins(int randx , int randy , uint16_t x , uint16_t y ,int hinverted);
 
 volatile uint32_t milliseconds;
@@ -83,6 +83,20 @@ int hp = 3;
 int score = 0;
 int player_mode; 
 
+int hinverted = 0;
+int vinverted = 0;
+int toggle = 0;
+int hmoved = 0;
+int vmoved = 0;
+
+
+
+int hinverted2 = 0;
+int vinverted2 = 0;
+int toggle2 = 0;
+int hmoved2 = 0;
+int vmoved2 = 0;
+
 uint16_t x = 50;
 uint16_t y = 50;
 uint16_t x2 = 100;
@@ -94,19 +108,6 @@ int main()
 
 	int difficulty = 1;
 
-	int hinverted = 0;
-	int vinverted = 0;
-	int toggle = 0;
-	int hmoved = 0;
-	int vmoved = 0;
-
-
-
-	int hinverted2 = 0;
-	int vinverted2 = 0;
-	int toggle2 = 0;
-	int hmoved2 = 0;
-	int vmoved2 = 0;
 
 
 	//random x and y 
@@ -133,7 +134,7 @@ int main()
 	initSound();
 
 	//start menu 
-	menu_start(hinverted ,randy,randx);
+	menu_start(randy,randx);
 	
 	//serial 
 	initSerial(); 
@@ -142,7 +143,9 @@ int main()
 
 	
 	//Draws the coin onto the screen
-	item_gen(hinverted ,randy,randx);
+	item_gen(randy,randx);
+
+	//draws super evilguy 
 	putImage(x2,y2,16,16,superevilguy1,hinverted,0);
 	
 	//light test 
@@ -152,7 +155,7 @@ int main()
 	
 	while(1)
 	{
-		health( score , hinverted , randx, randy);
+		health(randx, randy);
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
 		hmoved = vmoved = 0;
@@ -201,7 +204,7 @@ int main()
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 		{
-			reset(hinverted ,randy,randx);
+			reset(randy,randx);
 		}
 
 		
@@ -372,7 +375,7 @@ int main()
 				x2 = 100;
 				y2 = 100;
 				hp--; //takes 1 health 
-				health( score , hinverted , randx, randy);//updates the lights relative to health 
+				health( randx, randy);//updates the lights relative to health 
 
 				//to do remove line when fixed 
 				/*
@@ -576,7 +579,7 @@ int randomevil(){
 	return randevil;
 }
 
-void menu_start(int hinverted ,int randx,int randy ){
+void menu_start(int randx,int randy ){
 	//positioning 
 
 
@@ -601,48 +604,35 @@ void menu_start(int hinverted ,int randx,int randy ){
 
 
 		__asm("wfi");//sleep 
-		//player 1 
+		//start  
 		if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 		{
 			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-			//sets the game to be player 1 
-			player_mode = 1; 
 
 			//stop music 
 			playNote(0);
 
+			
 			//escape the loop 
 			break;
 		}
-		//player 2 
-		if ( (GPIOA->IDR & (1 << 11)) == 0)//down
-		{
-			fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-			//sets the game to be player 2 
-			player_mode = 2 ; 
-
-			//stop music 
-			playNote(0);
-				
-			//escape the loop 
-			break;
-		}
+	
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 			{
 				//reset function 
-				reset(hinverted ,randy,randx);
+				reset(randy,randx);
 			}
 	}
 }
 
 //function to draw coin to the screen 
-void item_gen(int hinverted ,int randy,int randx){
+void item_gen(int randy,int randx){
 	//draws coin
 	//putImage(x,y,12,16,coin,0,0);//
 	putImage(randx,randy,16,16,coin,hinverted,0);
 }
-
-void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
+/*
+void coins(int randx,int randy , uint16_t x , uint16_t y ){
 	
 	// Now check for an overlap by checking to see if ANY of the 4 corners of Coin are within the target area
 	if ((isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )== 1 )
@@ -671,7 +661,8 @@ void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 
 	}		
 }
-void health(int score ,int hinverted ,int randx,int randy){
+	*/
+void health(int randx,int randy){
 	while(1){
 		if(hp == 3){
 
@@ -709,7 +700,7 @@ void health(int score ,int hinverted ,int randx,int randy){
 			GPIOA->ODR = GPIOA->ODR|= (0<<3);
 			
 			//ends the game 
-			game_over(score, hinverted , randx , randy);
+			game_over(randx , randy);
 			
 		}
 	}
@@ -717,7 +708,7 @@ void health(int score ,int hinverted ,int randx,int randy){
 }	
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
-void game_over(int score ,int hinverted ,int randx,int randy ){
+void game_over(int randx,int randy ){
 	delay(500);
 	fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 	//loop for menu 
@@ -731,26 +722,26 @@ void game_over(int score ,int hinverted ,int randx,int randy ){
 	
 	delay(6000);
 	
-	reset(hinverted ,randy,randx); // resets the game 
+	reset(randy,randx); // resets the game 
 	
 		
 }
 
 
-void reset(int hinverted ,int randx,int randy )
+void reset(int randx,int randy )
 {
 	fillRectangle(0,0,128,160,0x0);
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
-	delay(1000);//sleeps 1 second 
-	menu_start( hinverted , randx, randy ); 
-
 	//should reset the lilguy and superevilguy 
 	x = 50 ; 
 	y= 50 ; 
 	x2 = 100; 
 	y2 = 100 ; 
-	item_gen(hinverted ,randy,randx);
+	
+	delay(1000);//sleeps 1 second 
+	menu_start(randx, randy ); 
+
 
 }
 
