@@ -29,7 +29,7 @@ void p2_game_over(int);
 void reset(void);
 
 //random functions 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t *hmoved2, uint16_t *hinverted2,uint16_t  *vmoved2 , uint16_t *vinverted2 , int , int ); 
+int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int oldx2, int oldy2 , int toggle2); 
 int random_y(void);
 int random_x(void);
 
@@ -40,12 +40,12 @@ int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
-void item_gen(int ,int ,int );
-void coins(int , int ); 
-void touch_evil(void); 
+void item_gen(int hinverted ,int randx,int randy );
+void coins(int randx , int randy , uint16_t x , uint16_t y ,int hinverted); 
+void touch_evil(uint16_t x2, uint16_t y2 , uint16_t x , uint16_t y); 
 
 //controls the movement of lilguy 
-void lil_guy_movement(int , int);
+void lil_guy_movement(int oldx , int oldy, uint16_t  hmoved,  uint16_t hinverted, uint16_t x , uint16_t y  ,uint16_t vmoved,uint16_t vinverted ,int toggle);
 
 volatile uint32_t milliseconds;
 
@@ -87,61 +87,68 @@ int score = 0;
 int player_mode; 
 
 
-//positioning 
-uint16_t x = 50;
-uint16_t y = 50;
-uint16_t x2 = 100;
-uint16_t y2 = 100;
-
-
-//variables 
-int hinverted = 0;
-int vinverted = 0;
-int toggle = 0;
-int hmoved = 0;
-int vmoved = 0;
-
-
-
-int hinverted2 = 0;
-int vinverted2 = 0;
-int toggle2 = 0;
-int hmoved2 = 0;
-int vmoved2 = 0;
 
 	
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
+		
+	//positioning 
+	uint16_t x = 50;
+	uint16_t y = 50;
+	uint16_t x2 = 100;
+	uint16_t y2 = 100;
+
+
+	//variables 
+	int hinverted = 0;
+	int vinverted = 0;
+	int toggle = 0;
+	int hmoved = 0;
+	int vmoved = 0;
+
+
+
+	int hinverted2 = 0;
+	int vinverted2 = 0;
+	int toggle2 = 0;
+	int hmoved2 = 0;
+	int vmoved2 = 0;
+
 	//positioning variables 
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	uint16_t oldx2 = x2;
 	uint16_t oldy2 = y2;
+
 	
+	//random x and y 
+	int randx = random_x();
+	int randy = random_y();
+	
+	//random values for evilguy 
+	randomevil(x2 , y2 , hmoved2, hinverted2, vmoved2 ,  vinverted2 , oldx2 , oldy2 , toggle2);
+
 	
 	//startup 
 	initClock();
 	initSysTick();
 	setupIO();
+	//serial 
+	initSerial(); 
 	
-	//random x and y 
-	int randx = random_x();
-	int randy = random_y();
-	//random values for evilguy 
-	randomevil(x2 , y2 , &hmoved2, &hinverted2, &vmoved2 ,  &vinverted2 , oldx2 , oldy2);
-
 	//sound 
 	initSound();
 
 	//start menu 
 	menu_start();
 	
-	//serial 
-	initSerial(); 
+	
 
 	//Draws the coin onto the screen
 	item_gen(hinverted ,randy,randx);
+	putImage(x2,y2,16,16,superevilguy1,hinverted,0);
+	
 	//checks if the "lilguy" is inside the coin 
 	
 	//gameplay loop 
@@ -149,6 +156,7 @@ int main()
 	{
 		//checks the health 	
 		health();
+
 		//shows the current score 
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
@@ -159,16 +167,20 @@ int main()
 		hinverted = vinverted = 0;
 		
 		//movement of superevilguy 
-		randomevil( x2 ,y2,  hmoved2,  hinverted2,  vmoved2 ,  vinverted2 , oldx2 , oldy2);
+		randomevil( x2 ,y2,  hmoved2,  hinverted2,  vmoved2 ,  vinverted2 , oldx2 , oldy2, toggle2);
 
 		//controls the movement for lilguy 
-		lil_guy_movement(oldx, oldy); 
+		lil_guy_movement( oldx ,  oldy,   hmoved,  hinverted,  x ,  y  , vmoved, vinverted , toggle); 
 		
+		//is lilguy touching super evil guy 
+		touch_evil( x2,  y2 ,  x ,  y);
+
 		//test serial
 		printDecimal(score);
+
 		//checks if the character is touching a coin 
-		coins(randx, randy);
-		
+		coins(randx, randy , x , y , hinverted);
+
 		
 		//sleeps 10 seconds  
 		delay(100);
@@ -340,7 +352,7 @@ int random_y(/*int , int*/){
 }
 
 //controls movement for "lil_guy"
-void lil_guy_movement(int oldx, int oldy){
+void lil_guy_movement(int oldx , int oldy, uint16_t  hmoved,  uint16_t hinverted, uint16_t x , uint16_t y  ,uint16_t vmoved,uint16_t vinverted,int toggle){
 
 	//Lilguy code
 	if ((GPIOB->IDR & (1 << 4))==0) // right pressed
@@ -410,7 +422,7 @@ void lil_guy_movement(int oldx, int oldy){
 }
 }
 //generates random movement for the evilguy 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t *hmoved2, uint16_t *hinverted2,uint16_t  *vmoved2 , uint16_t *vinverted2 , int oldx2 , int oldy2){
+int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int oldx2 , int oldy2 , int toggle2){
 	
 	//code for directions (random)
 	int randevil = rand() % 4 + 1 ;
@@ -456,34 +468,34 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t *hmoved2, uint16_t *hinverted2
 	}
 	
 		//movement for evilguy 
-		if ((vmoved2) || (hmoved2))
+	if ((vmoved2) || (hmoved2))
+	{
+		// only redraw if there has been some movement (reduces flicker)
+		fillRectangle(oldx2,oldy2,16,16,0);
+		oldx2 = x2;
+		oldy2 = y2;					
+		if (hmoved2)
 		{
-			// only redraw if there has been some movement (reduces flicker)
-			fillRectangle(oldx2,oldy2,16,16,0);
-			oldx2 = x2;
-			oldy2 = y2;					
-			if (hmoved2)
-			{
-				//draws charactar to the screen 
-				if (toggle2)
-					putImage(x2,y2,16,16,superevilguy1,hinverted2,0);
-				else
-					putImage(x2,y2,16,16,superevilguy2,hinverted2,0);
-				
-				toggle2 = toggle2 ^ 1;
-			}
+			//draws charactar to the screen 
+			if (toggle2)
+				putImage(x2,y2,16,16,superevilguy1,hinverted2,0);
 			else
-			{
-				//adds an image of the badguy 
-				putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
+				putImage(x2,y2,16,16,superevilguy2,hinverted2,0);
+				
+			toggle2 = toggle2 ^ 1;
 			}
+		else
+		{
+		//adds an image of the badguy 
+		putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
 		}
+	}
 
 	//nolonger needed 
-	//return randevil;
+	return randevil;
 }
 
-void touch_evil(void){
+void touch_evil(uint16_t x2, uint16_t y2 , uint16_t x , uint16_t y ){
 	//is character touching any of the four corners of the evilguy
 	if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
 	{
@@ -565,10 +577,10 @@ void item_gen(int hinverted ,int randy,int randx){
 }
 
 //checks if the character is in the coin 
-void coins(int randx,int randy){
+void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 	
 	// Now check for an overlap by checking to see if ANY of the 4 corners of Coin are within the target area
-	if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )
+	if ((isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )== 1 )
 	{
 		//adds one to the score 
 		score+=1;
@@ -595,6 +607,7 @@ void coins(int randx,int randy){
 		
 			
 	}		
+	
 	
 }
 
