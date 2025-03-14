@@ -618,7 +618,7 @@ void health(void){
 }	
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
-void p1_game_over(score){
+void game_over(score){
 	//fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 	//loop for menu 
 	
@@ -631,15 +631,17 @@ void p1_game_over(score){
 	//prompt 
 	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
 	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
+
 	__asm("wfi");//sleep 
-		//play again 
+	
+	//play again 
 	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 	{
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-
-			//add high score to the 
-			//reset(); //starts the game again 
-			//break; // escapes the loop 
+		//prints the players score ro the screen 
+		eputs("\nplayer high score:");                         
+		printDecimal(score);
+			
 	}
 		//menu 
 	if ( (GPIOA->IDR & (1 << 4)) == 0)//right
@@ -647,13 +649,13 @@ void p1_game_over(score){
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 
 			//sends score to pc 
-		eputs("\nplayer 1 high score:"); 
-		printDecimal(score);// sends the score to the terminal 
-			//reset(); // starts the game again 
-			//break; // escapes the loop 
+		eputs("\nplayer high score:"); 
+		printDecimal(score);
 	}
 	delay(30);//waits 3 seconds 
-
+	 
+	
+	__asm("wfi");//sleep 
 	reset(); // resets the game 
 		
 }
