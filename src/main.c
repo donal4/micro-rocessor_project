@@ -43,7 +43,8 @@ int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
-void item_gen(int ,int ,int );
+void item_gen(int hinverted ,int randx,int randy );
+void coins(int randx , int randy , uint16_t x , uint16_t y ,int hinverted);
 
 volatile uint32_t milliseconds;
 
@@ -565,12 +566,44 @@ void menu_start(){
 	}
 }
 
-void item_gen(hinverted ,randy,randx){
+//function to draw coin to the screen 
+void item_gen(int hinverted ,int randy,int randx){
 	//draws coin
 	//putImage(x,y,12,16,coin,0,0);//
 	putImage(randx,randy,16,16,coin,hinverted,0);
 }
 
+void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
+	
+	// Now check for an overlap by checking to see if ANY of the 4 corners of Coin are within the target area
+	if ((isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )== 1 )
+	{
+		//adds one to the score 
+		score+=1;
+
+		//play sound 
+		playNote(B6);//coin sound 
+		delay(10);//delay
+		playNote(B7);//octave above 
+		delay(10);//delay
+		delay(10);//delay
+		playNote(0);//stops sound
+
+
+		fillRectangle(randx,randy,16,16,0);// covers scren with black pixels 
+			
+
+		//resets the random x and y co -ords 
+		randx = random_x();
+		randy = random_y();
+
+		//calls the item gen function 
+		item_gen(hinverted ,randy,randx);
+
+		
+			
+	}		
+}
 void health(void){
 	while(1){
 		if(hp == 3){
