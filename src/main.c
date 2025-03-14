@@ -483,19 +483,18 @@ void setupIO()
 //function to give ramdom x co-ords in screen
 int random_x(/*int , int*/){
 
-	int rand_x = rand() % 118 + 1 ;
+	int rand_x = rand() % 108 + 1 ;
 
 	//if x is on the edges 
 	if(rand_x == 0 || rand_x == 118){
 		random_x();
 	}
-
 	return rand_x; 
 }
 //function to give ramdom y co-ords in screen
 int random_y(/*int , int*/){
 
-	int rand_y = rand() % 150 + 1 ;
+	int rand_y = rand() % 140 + 1 ;
 
 	//if y is on the edges 
 	if(rand_y == 0 || rand_y == 150){
@@ -602,8 +601,6 @@ void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
 		//calls the item gen function 
 		item_gen(hinverted ,randy,randx);
 
-		
-			
 	}		
 }
 void health(void){
@@ -671,6 +668,7 @@ void game_over(score){
 	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
 
 	__asm("wfi");//sleep 
+	delay(100);
 	
 	//play again 
 	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
