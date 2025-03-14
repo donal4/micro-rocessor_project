@@ -504,7 +504,6 @@ int randomevil(){
 	return randevil;
 }
 
-
 void menu_start(){
 	//positioning 
 
@@ -552,19 +551,16 @@ void menu_start(){
 			//stop music 
 			playNote(0);
 				
-				
-
-
 			//escape the loop 
 			break;
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 			{
+				//reset function 
 				reset();
 			}
 	}
 }
-
 void item_gen(hinverted ,randy,randx){
 	//draws coin
 	//putImage(x,y,12,16,coin,0,0);//
