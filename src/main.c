@@ -170,9 +170,6 @@ int main()
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
 
-		//test serial
-		printDecimal(score);
-
 		//Lilguy code
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
