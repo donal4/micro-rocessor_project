@@ -636,38 +636,40 @@ void health(int score, uint16_t x, uint16_t y, uint16_t x2 , uint16_t y2 , uint1
 	while(1){
 		if(hp == 3){
 
-			GPIOA->ODR = GPIOA->ODR || (1<<1);
+			GPIOA->ODR = GPIOA->ODR || (1<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR || (1<<2);
+			GPIOA->ODR = GPIOA->ODR || (1<<1);//second light 
 
-			GPIOA->ODR = GPIOA->ODR ||  (1<<3);
+			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
 			break; 
 		}
 		if(hp == 2){
 
-			GPIOA->ODR = GPIOA->ODR || (0<<2);
+			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR || (1<<1);
+			GPIOA->ODR = GPIOA->ODR || (1<<1);//second light 
 
-			GPIOA->ODR = GPIOA->ODR || (1<<3);
-			break;
+			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
+			break; 
 		}
 		if(hp == 1){
 
-			GPIOA->ODR = GPIOA->ODR || (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR || (0<<1);
+			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR || (1<<3);
-			break;
+			GPIOA->ODR = GPIOA->ODR || (0<<1);//second light 
+
+			GPIOA->ODR = GPIOA->ODR ||  (1<<3); //third light 
+			break; 	
 		}
 		if(hp == 0){
 
-			GPIOA->ODR = GPIOA->ODR|| (0<<2);
+			GPIOA->ODR = GPIOA->ODR || (0<<2); //first light 
 
-			GPIOA->ODR = GPIOA->ODR|| (0<<1);
+			GPIOA->ODR = GPIOA->ODR || (0<<1);//second light 
 
-			GPIOA->ODR = GPIOA->ODR|| (0<<3);
+			GPIOA->ODR = GPIOA->ODR ||  (0<<3); //third light 
+
 			//if player 1 
 			if(player_mode == 1 ){
 
