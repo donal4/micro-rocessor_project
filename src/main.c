@@ -676,46 +676,42 @@ void health(void){
 	while(1){
 		if(hp == 3){
 
-			GPIOA->ODR = GPIOA->ODR| (1<<2);
+			GPIOA->ODR = GPIOA->ODR|= (1<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<1);
+			GPIOA->ODR = GPIOA->ODR|= (1<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);
 			break; 
 		}
 		if(hp == 2){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR|= (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<1);
+			GPIOA->ODR = GPIOA->ODR|= (1<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);
 			break;
 		}
 		if(hp == 1){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR|= (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (0<<1);
+			GPIOA->ODR = GPIOA->ODR|= (0<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);
 			break;
 		}
 		if(hp == 0){
 
-			GPIOA->ODR = GPIOA->ODR| (0<<2);
+			GPIOA->ODR = GPIOA->ODR|= (0<<2);
 
-			GPIOA->ODR = GPIOA->ODR| (0<<1);
+			GPIOA->ODR = GPIOA->ODR|= (0<<1);
 
-			GPIOA->ODR = GPIOA->ODR| (0<<3);
-			//if player 1 
-			if(player_mode == 1 ){
-
-				game_over(score);
-			}
-			if(player_mode == 2 ){
-				game_over(score);
-			}
+			GPIOA->ODR = GPIOA->ODR|= (0<<3);
+			
+			//ends the game 
+			game_over(score);
+			
 		}
 	}
 
@@ -733,10 +729,7 @@ void game_over(score){
 	printTextX2("score", 20, 50, RGBToWord(0xff,0xff,0), 0);
 	printNumberX2(score,20, 70, RGBToWord(0xff,0xff,0), 0);
 	
-	//prompt 
-	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
-	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
-
+	
 	delay(6000);
 	
 	reset(); // resets the game 
