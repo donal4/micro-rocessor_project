@@ -136,7 +136,7 @@ int main()
 	setupIO();
 	//serial 
 	initSerial(); 
-	
+
 	//sound 
 	initSound();
 
@@ -163,8 +163,10 @@ int main()
 
 
 		//movement 
+		
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
+		
 		
 		//movement of superevilguy 
 		randomevil( x2 ,y2,  hmoved2,  hinverted2,  vmoved2 ,  vinverted2 , oldx2 , oldy2, toggle2);
@@ -437,7 +439,7 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 				hmoved2 = 1;
 				hinverted2=0;
 			}				
-			break;
+		
 		case 2:
 			//left 
 			if (x2 > 10)
@@ -446,7 +448,7 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 				hmoved2 = 1;
 				hinverted2=1;
 			}				
-			break;
+			
 		case 3:
 		//up 
 			if (y2 < 140)
@@ -455,7 +457,7 @@ int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,u
 				vmoved2 = 1;
 				vinverted2 = 0;
 			}
-			break;
+			
 		case 4:
 		//down 
 			if (y2 > 16)
