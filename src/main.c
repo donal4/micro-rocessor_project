@@ -1,4 +1,5 @@
-//main includes 
+
+//test 
 #include <stm32f031x6.h>
 #include "display.h"
 
@@ -12,47 +13,44 @@ void initSysTick(void);
 void SysTick_Handler(void);
 void delay(volatile uint32_t dly);
 void setupIO();
+
 //serial 
 void initSerial();
 
 //sound 
-void playNote(uint32_t Freq);
-void initSound(void);
+//void playNote(uint32_t Freq);
+//void initSound(void);
 
-
-//main menu 
-void menu_start();
-void game_over(int);
-void p2_game_over(int);
+//menu 
 
 //Reset
 void reset(void);
 
+//main menu 
+void menu_start();
+void p1_game_over(int);
+void p2_game_over(int);
+
 //random functions 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int oldx2, int oldy2 , int toggle2); 
+int randomevil(void); 
 int random_y(void);
 int random_x(void);
 
-
-
+// void random(uint16_t x1, uint16_t y1);
 					//x   co-ord   y co -ord   width        height 		player x      player y 
 int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint16_t py);
+
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
-void item_gen(int hinverted ,int randx,int randy );
-void coins(int randx , int randy , uint16_t x , uint16_t y ,int hinverted); 
-void touch_evil(uint16_t x2, uint16_t y2 , uint16_t x , uint16_t y); 
-
-//controls the movement of lilguy 
-void lil_guy_movement(int oldx , int oldy, uint16_t  hmoved,  uint16_t hinverted, uint16_t x , uint16_t y  ,uint16_t vmoved,uint16_t vinverted ,int toggle);
+void item_gen(int ,int ,int );
 
 volatile uint32_t milliseconds;
 
 
 //tune 
-uint32_t my_tune_notes[]={C4,G4,E4};
-uint32_t my_tune_times[]={600,800,200};
+uint32_t my_tune_notes[]={B5,A7,C4};
+uint32_t my_tune_times[]={1000,800,200};
 // Variables to handle background tunes
 uint32_t * background_tune_notes=0;
 uint32_t * background_tune_times;
@@ -80,26 +78,14 @@ const uint16_t superevilguy2[] = {0,0,0,0,0,4912,4912,4912,4912,4912,4912,0,0,0,
 //items
 const uint16_t coin[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8191,32767,8191,55758,1321,17441,57344,0,0,0,0,0,0,0,40695,40431,38917,14853,63749,13828,54276,63749,8720,24576,0,0,0,0,0,24311,55045,14597,32239,15062,7663,0,38917,23045,6661,33032,0,0,0,0,0,15855,6149,23302,40695,54788,30469,0,47109,39942,47621,8192,0,0,0,0,56022,0,64005,64005,56815,62980,62468,0,6149,55557,5380,8192,0,0,0,0,31975,0,22533,15110,56551,22277,30725,0,39173,15110,38661,8192,0,0,0,0,39902,0,39173,22789,15855,23045,30981,0,63749,14597,38917,16384,0,0,0,0,23518,0,22789,30469,48887,23045,38661,0,22789,56069,14597,0,0,0,0,0,57079,0,39173,55045,31446,54532,6661,0,47109,6405,62980,0,0,0,0,0,24047,0,55813,38917,47830,13316,62724,0,31237,23045,63237,0,0,0,0,50209,0,32239,22789,39173,7927,37123,28931,0,47365,56069,38661,0,0,0,0,0,49944,7663,64005,6405,0,0,0,0,63749,30725,0,0,0,0,0,0,9513,0,40695,30469,6661,14853,38917,31237,39173,54788,0,0,0,0,0,0,0,17441,0,0,30725,38917,6149,46853,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
 
-
-//global var(player )
+//global var 
 int hp = 3; 
+//player score 
 int score = 0;
 int player_mode; 
-
-
-
-	
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
-		
-	//positioning 
-	uint16_t x = 50;
-	uint16_t y = 50;
-	uint16_t x2 = 100;
-	uint16_t y2 = 100;
-
-
 	//variables 
 	int hinverted = 0;
 	int vinverted = 0;
@@ -115,82 +101,239 @@ int main()
 	int hmoved2 = 0;
 	int vmoved2 = 0;
 
-	//positioning variables 
+
+	//random x and y 
+	int randx = random_x();
+	int randy = random_y();
+	//random values for evilguy 
+	int randevil = randomevil();
+
+	
+	
+	//positioning 
+	uint16_t x = 50;
+	uint16_t y = 50;
+	uint16_t x2 = 100;
+	uint16_t y2 = 100;
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	uint16_t oldx2 = x2;
 	uint16_t oldy2 = y2;
-
-	
-	//random x and y 
-	int randx = random_x();
-	int randy = random_y();
-	
-	//random values for evilguy 
-	randomevil(x2 , y2 , hmoved2, hinverted2, vmoved2 ,  vinverted2 , oldx2 , oldy2 , toggle2);
-
 	
 	//startup 
 	initClock();
 	initSysTick();
 	setupIO();
-	//serial 
-	initSerial(); 
-
+	
 	//sound 
 	initSound();
 
 	//start menu 
-	menu_start();
+	menu_start(&x ,  &y, &x2 , &y2 , &oldx, &oldy ,&oldx2, &oldy2);
 	
-	
+	//serial 
+	initSerial(); 
 
+
+
+	
 	//Draws the coin onto the screen
 	item_gen(hinverted ,randy,randx);
 	putImage(x2,y2,16,16,superevilguy1,hinverted,0);
 	
-	//checks if the "lilguy" is inside the coin 
+	//light test 
+	//pinMode(GPIOA,1,1);
+	//GPIOA->ODR = 1;
+	//putImage(0,0,12,16,dg1,0,0);
 	
-	//gameplay loop 
 	while(1)
 	{
-		//checks the health 	
 		health();
-
-		//shows the current score 
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
-
-
-		//movement 
-		
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
-		
-		
-		//movement of superevilguy 
-		randomevil( x2 ,y2,  hmoved2,  hinverted2,  vmoved2 ,  vinverted2 , oldx2 , oldy2, toggle2);
-
-		//controls the movement for lilguy 
-		lil_guy_movement( oldx ,  oldy,   hmoved,  hinverted,  x ,  y  , vmoved, vinverted , toggle); 
-		
-		//is lilguy touching super evil guy 
-		touch_evil( x2,  y2 ,  x ,  y);
 
 		//test serial
 		printDecimal(score);
+		//Lilguy code
+		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
+		{					
+			if (x < 110)
+			{
+				x = x + 3;
+				hmoved = 1;
+				hinverted=0;
+			}						
+		}
+		if ((GPIOB->IDR & (1 << 5))==0) // left pressed
+		{			
+			
+			if (x > 10)
+			{
+				x = x - 3;
+				hmoved = 1;
+				hinverted=1;
+			}			
+		}
+		if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
+		{
+			if (y < 140)
+			{
+				y = y + 3;			
+				vmoved = 1;
+				vinverted = 0;
+			}
+		}
+		if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
+		{			
+			if (y > 16)
+			{
+				y = y - 3;
+				vmoved = 1;
+				vinverted = 1;
+			}
+		}
+		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
+		{
+			reset();
+		}
 
-		//checks if the character is touching a coin 
-		coins(randx, randy , x , y , hinverted);
-
+		//movement of superevilguy 
+		switch(randevil) {
+			case 1:
+				if (x2 < 110)
+				{
+					x2 = x2 + 3;
+					hmoved2 = 1;
+					hinverted2=0;
+				}				
+				break;
+			case 2:
+				if (x2 > 10)
+				{
+					x2 = x2 - 3;
+					hmoved2 = 1;
+					hinverted2=1;
+				}				
+				break;
+			case 3:
+				if (y2 < 140)
+				{
+					y2 = y2 + 3;			
+					vmoved2 = 1;
+					vinverted2 = 0;
+				}
+				break;
+			case 4:
+				if (y2 > 16)
+				{
+					y2 = y2 - 3;
+					vmoved2 = 1;
+					vinverted2 = 1;
+				}
+			
+		}
+		randevil = randomevil();
 		
-		//sleeps 10 seconds  
+		
+		if ((vmoved) || (hmoved))
+		{
+			// only redraw if there has been some movement (reduces flicker)
+			fillRectangle(oldx,oldy,16,16,0);
+			oldx = x;
+			oldy = y;					
+			if (hmoved)
+			{
+				//draws charactar to the screen 
+				if (toggle)
+					putImage(x,y,16,16,lilguy,hinverted,0);
+				else
+					putImage(x,y,16,16,lilguy2,hinverted,0);
+				
+				toggle = toggle ^ 1;
+			}
+			else
+			{
+				//topdown lilguy 
+				putImage(x,y,12,16,lilguy4,0,vinverted);
+			}
+
+			//is character touching any of the four corners of the evilguy
+			if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
+			{
+				//minus 1 life 
+				
+				//play sound 
+				playNote(B6);//coin sound 
+				delay(5);//delay
+				playNote(B7);//octave above 
+				delay(10);//delay
+				playNote(0);//stops sound
+
+				hp--; 
+				health();//updates the lights relative to health 
+
+				//to do remove line when fixed 
+				/*
+				printTextX2("death!", 10, 50, RGBToWord(0xff,0xff,0), 0);
+				*/ 
+				
+			}
+
+			
+			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
+			if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )
+			{
+				score+=1;
+				//play sound 
+				playNote(B6);//coin sound 
+				delay(10);//delay
+				playNote(B7);//octave above 
+				delay(10);//delay
+				delay(10);//delay
+				playNote(0);//stops sound
+
+				/*
+				int oldrandx = randx;
+				int oldrandy = randy;
+				*/
+
+				fillRectangle(randx,randy,16,16,0);
+				
+
+				randx = random_x();
+				randy = random_y();
+
+				putImage(randx,randy,16,16,coin,hinverted,0);
+				
+			}
+		}		
+		if ((vmoved2) || (hmoved2))
+		{
+			// only redraw if there has been some movement (reduces flicker)
+			fillRectangle(oldx2,oldy2,16,16,0);
+			oldx2 = x2;
+			oldy2 = y2;					
+			if (hmoved2)
+			{
+				//draws charactar to the screen 
+				if (toggle2)
+					putImage(x2,y2,16,16,superevilguy1,hinverted2,0);
+				else
+					putImage(x2,y2,16,16,superevilguy2,hinverted2,0);
+				
+				toggle2 = toggle2 ^ 1;
+			}
+			else
+			{
+				putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
+			}
+		}
 		delay(100);
 	}
-	//exit code 
 	return 0;
 }
-
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -202,7 +345,6 @@ void initSysTick(void)
 	__asm(" cpsie i "); // enable interrupts
 }
 
-//added background music stuff to systick handler (do not mess with)
 void SysTick_Handler(void)
 {
 	static int index = 0;
@@ -234,8 +376,6 @@ void SysTick_Handler(void)
 		}
 	}
 }
-
-//dangerous (dont touch cause its still working) 
 void initClock(void)
 {
 // This is potentially a dangerous function as it could
@@ -305,7 +445,6 @@ int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint
 	return rvalue;
 }
 
-//added leds to the setup 
 void setupIO()
 {
 	RCC->AHBENR |= (1 << 18) + (1 << 17); // enable Ports A and B
@@ -328,9 +467,15 @@ void setupIO()
 	pinMode(GPIOA,3,1); 
 	
 }
+ 
+
+
+// 					random function 
+
+
 
 //function to give ramdom x co-ords in screen
-int random_x(){
+int random_x(/*int , int*/){
 
 	int rand_x = rand() % 118 + 1 ;
 
@@ -353,165 +498,12 @@ int random_y(/*int , int*/){
 	return rand_y; 
 }
 
-//controls movement for "lil_guy"
-void lil_guy_movement(int oldx , int oldy, uint16_t  hmoved,  uint16_t hinverted, uint16_t x , uint16_t y  ,uint16_t vmoved,uint16_t vinverted,int toggle){
-
-	//Lilguy code
-	if ((GPIOB->IDR & (1 << 4))==0) // right pressed
-	{					
-		if (x < 110)
-		{
-			x = x + 3;
-			hmoved = 1;
-			hinverted=0;
-		}						
-	}
-	if ((GPIOB->IDR & (1 << 5))==0) // left pressed
-	{				
-		if (x > 10)
-		{
-			x = x - 3;
-			hmoved = 1;
-			hinverted=1;
-		}			
-	}
-	if ( (GPIOA->IDR & (1 << 11)) == 0) // down pressed
-	{
-		if (y < 140)
-		{
-			y = y + 3;			
-			vmoved = 1;
-			vinverted = 0;
-		}
-	}
-	if ( (GPIOA->IDR & (1 << 8)) == 0) // up pressed
-	{			
-		if (y > 16)
-		{
-			y = y - 3;
-			vmoved = 1;
-			vinverted = 1;
-		}
-	}
-	if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
-	{
-		reset();
-	}
-
-	//drawing character to the screen (i think)
-	if ((vmoved) || (hmoved))
-		{
-			// only redraw if there has been some movement (reduces flicker)
-			fillRectangle(oldx,oldy,16,16,0);
-			oldx = x;
-			oldy = y;					
-			if (hmoved)
-			{
-				//draws charactar to the screen 
-				if (toggle)
-					putImage(x,y,16,16,lilguy,hinverted,0);
-				else
-					putImage(x,y,16,16,lilguy2,hinverted,0);
-				
-				toggle = toggle ^ 1;
-			}
-			else
-			{
-				//topdown lilguy 
-				putImage(x,y,12,16,lilguy4,0,vinverted);
-			}
-		
-}
-}
-//generates random movement for the evilguy 
-int randomevil(uint16_t x2 ,uint16_t y2, uint16_t hmoved2, uint16_t hinverted2,uint16_t  vmoved2 , uint16_t vinverted2 , int oldx2 , int oldy2 , int toggle2){
-	
-	//code for directions (random)
+int randomevil(){
 	int randevil = rand() % 4 + 1 ;
 
-	//chooses which direction to move the "super evilguy "based off of the random int 
-	switch(randevil) {
-		case 1:
-			if (x2 < 110)
-			{
-				//moves charactar right 
-				x2 = x2 + 3;
-				hmoved2 = 1;
-				hinverted2=0;
-			}				
-		
-		case 2:
-			//left 
-			if (x2 > 10)
-			{
-				x2 = x2 - 3;
-				hmoved2 = 1;
-				hinverted2=1;
-			}				
-			
-		case 3:
-		//up 
-			if (y2 < 140)
-			{
-				y2 = y2 + 3;			
-				vmoved2 = 1;
-				vinverted2 = 0;
-			}
-			
-		case 4:
-		//down 
-			if (y2 > 16)
-			{
-				y2 = y2 - 3;
-				vmoved2 = 1;
-				vinverted2 = 1;
-			}
-		
-	}
-	
-		//movement for evilguy 
-	if ((vmoved2) || (hmoved2))
-	{
-		// only redraw if there has been some movement (reduces flicker)
-		fillRectangle(oldx2,oldy2,16,16,0);
-		oldx2 = x2;
-		oldy2 = y2;					
-		if (hmoved2)
-		{
-			//draws charactar to the screen 
-			if (toggle2)
-				putImage(x2,y2,16,16,superevilguy1,hinverted2,0);
-			else
-				putImage(x2,y2,16,16,superevilguy2,hinverted2,0);
-				
-			toggle2 = toggle2 ^ 1;
-			}
-		else
-		{
-		//adds an image of the badguy 
-		putImage(x2,y2,16,16,superevilguy1,0,vinverted2);
-		}
-	}
-
-	//nolonger needed 
 	return randevil;
 }
 
-void touch_evil(uint16_t x2, uint16_t y2 , uint16_t x , uint16_t y ){
-	//is character touching any of the four corners of the evilguy
-	if (isInside(x2,y2,16,16,x,y) || isInside(x2,y2,16,16,x+16,y) || isInside(x2,y2,16,16,x,y+16) || isInside(x2,y2,16,16,x+16,+16) )
-	{
-		//play sound 
-		playNote(B6);//coin sound 
-		delay(5);//delay
-		playNote(B7);//octave above 
-		delay(10);//delay
-		playNote(0);//stops sound
-
-		hp--; //minus one health 
-		health();//updates the lights relative to health 
-	}
-}
 
 void menu_start(){
 	//positioning 
@@ -560,60 +552,25 @@ void menu_start(){
 			//stop music 
 			playNote(0);
 				
+				
+
+
 			//escape the loop 
 			break;
 		}
 		if ( (GPIOA->IDR & (1 << 0)) == 0) // if reset button pressed
 			{
-				//reset function 
 				reset();
 			}
 	}
 }
 
-//function to draw coin to the screen 
-void item_gen(int hinverted ,int randy,int randx){
+void item_gen(hinverted ,randy,randx){
 	//draws coin
 	//putImage(x,y,12,16,coin,0,0);//
 	putImage(randx,randy,16,16,coin,hinverted,0);
 }
 
-//checks if the character is in the coin 
-void coins(int randx,int randy , uint16_t x , uint16_t y ,int hinverted){
-	
-	// Now check for an overlap by checking to see if ANY of the 4 corners of Coin are within the target area
-	if ((isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )== 1 )
-	{
-		//adds one to the score 
-		score+=1;
-
-		//play sound 
-		playNote(B6);//coin sound 
-		delay(10);//delay
-		playNote(B7);//octave above 
-		delay(10);//delay
-		delay(10);//delay
-		playNote(0);//stops sound
-
-
-		fillRectangle(randx,randy,16,16,0);// covers scren with black pixels 
-			
-
-		//resets the random x and y co -ords 
-		randx = random_x();
-		randy = random_y();
-
-		//calls the item gen function 
-		item_gen(hinverted ,randy,randx);
-
-		
-			
-	}		
-	
-	
-}
-
-//function to check player health 
 void health(void){
 	while(1){
 		if(hp == 3){
@@ -650,16 +607,66 @@ void health(void){
 			GPIOA->ODR = GPIOA->ODR| (0<<1);
 
 			GPIOA->ODR = GPIOA->ODR| (0<<3);
-			// game over screen 
-			game_over(score); 
+			//if player 1 
+			if(player_mode == 1 ){
+
+				p1_game_over(score);
+			}
+			if(player_mode == 2 ){
+				p2_game_over(score);
+			}
 		}
 	}
 
 }	
 
+//______________________________________________________________________________________________________________
+//serial 
+/*
+void initSerial()
+{
+	// On the nucleo board, TX is on PA2 while RX is on PA15 
+	RCC->AHBENR |= (1 << 17); // enable GPIOA
+	RCC->APB2ENR |= (1 << 14); // enable USART1
+	pinMode(GPIOA,2,2); // enable alternate function on PA2
+	pinMode(GPIOA,15,2); // enable alternate function on PA15
+	// AF1 = USART1 TX on PA2
+	GPIOA->AFR[0] &= 0xfffff0ff;
+	GPIOA->AFR[0] |= (1 << 8);
+	// AF1 = USART1 RX on PA15
+	GPIOA->AFR[1] &= 0x0fffffff;
+	GPIOA->AFR[1] |= (1 << 28);
+	// De-assert reset of USART1 
+	RCC->APB2RSTR &= ~(1u << 14);
+	
+	USART1->CR1 = 0; // disable before configuration
+	USART1->CR3 |= (1 << 12); // disable overrun detection
+	USART1->BRR = 48000000/9600; // assuming 48MHz clock and 9600 bps data rate
+	USART1->CR1 |= (1 << 2) + (1 << 3); // enable Transmistter and receiver
+	USART1->CR1 |= 1; // enable the UART
+
+}
+
+
+//gets charactar 
+char egetchar()
+{
+	while( (USART1->ISR & (1 << 5)) == 0); // wait for a character
+	return (char)USART1->RDR; // return the character that is waiting in the Receive Data Register
+}
+
+//puts string 
+void eputs(char *String)
+{
+	while(*String) // keep printing until a NULL is found
+	{
+		eputchar(*String);
+		String++;
+	}
+}*/
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
-void game_over(score){
+void p1_game_over(score){
 	//fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 	//loop for menu 
 	
@@ -672,17 +679,15 @@ void game_over(score){
 	//prompt 
 	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
 	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
-
 	__asm("wfi");//sleep 
-	
-	//play again 
+		//play again 
 	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
 	{
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
-		//prints the players score ro the screen 
-		eputs("\nplayer high score:");                         
-		printDecimal(score);
-			
+
+			//add high score to the 
+			//reset(); //starts the game again 
+			//break; // escapes the loop 
 	}
 		//menu 
 	if ( (GPIOA->IDR & (1 << 4)) == 0)//right
@@ -690,32 +695,36 @@ void game_over(score){
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 
 			//sends score to pc 
-		eputs("\nplayer high score:"); 
-		printDecimal(score);
+		eputs("\nplayer 1 high score:"); 
+		printDecimal(score);// sends the score to the terminal 
+			//reset(); // starts the game again 
+			//break; // escapes the loop 
 	}
 	delay(30);//waits 3 seconds 
-	 
-	
-	__asm("wfi");//sleep 
+
 	reset(); // resets the game 
 		
 }
 
-//resets the game 
+
+void p2_game_over(score){
+
+}
+
 void reset()
 {
-	fillRectangle(0,0,128,160,0x0);//fills screen with the colour black 
+	fillRectangle(0,0,128,160,0x0);
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
 	delay(10);//sleeps 1 second 
-	menu_start(); //calls the main menu 
+	menu_start(); 
+	
 }
 
 
 //background music 
 void playBackgroundTune(uint32_t * notes, uint32_t * times, uint32_t count, uint32_t repeat)
 {
-	//music functions 
 	background_tune_notes=notes;
 	background_tune_times=times;
 	background_note_count=count;
