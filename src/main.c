@@ -46,18 +46,6 @@ void coins(int randx , int randy , uint16_t x , uint16_t y ,int hinverted);
 
 volatile uint32_t milliseconds;
 
-
-//tune 
-uint32_t my_tune_notes[]={B5,A7,C4};
-uint32_t my_tune_times[]={1000,800,200};
-// Variables to handle background tunes
-uint32_t * background_tune_notes=0;
-uint32_t * background_tune_times;
-uint32_t background_note_count;
-uint32_t background_tune_repeat;
-
-
-
 // 				sprites 
 
 
@@ -78,7 +66,7 @@ const uint16_t superevilguy2[] = {0,0,0,0,0,4912,4912,4912,4912,4912,4912,0,0,0,
 const uint16_t coin[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8191,32767,8191,55758,1321,17441,57344,0,0,0,0,0,0,0,40695,40431,38917,14853,63749,13828,54276,63749,8720,24576,0,0,0,0,0,24311,55045,14597,32239,15062,7663,0,38917,23045,6661,33032,0,0,0,0,0,15855,6149,23302,40695,54788,30469,0,47109,39942,47621,8192,0,0,0,0,56022,0,64005,64005,56815,62980,62468,0,6149,55557,5380,8192,0,0,0,0,31975,0,22533,15110,56551,22277,30725,0,39173,15110,38661,8192,0,0,0,0,39902,0,39173,22789,15855,23045,30981,0,63749,14597,38917,16384,0,0,0,0,23518,0,22789,30469,48887,23045,38661,0,22789,56069,14597,0,0,0,0,0,57079,0,39173,55045,31446,54532,6661,0,47109,6405,62980,0,0,0,0,0,24047,0,55813,38917,47830,13316,62724,0,31237,23045,63237,0,0,0,0,50209,0,32239,22789,39173,7927,37123,28931,0,47365,56069,38661,0,0,0,0,0,49944,7663,64005,6405,0,0,0,0,63749,30725,0,0,0,0,0,0,9513,0,40695,30469,6661,14853,38917,31237,39173,54788,0,0,0,0,0,0,0,17441,0,0,30725,38917,6149,46853,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
 
 //global var 
-int difficulty = 0;
+int difficulty = 1;
 int hp = 3; 
 //player score 
 int score = 0;
@@ -445,34 +433,8 @@ void initSysTick(void)
 
 void SysTick_Handler(void)
 {
-	static int index = 0;
-	static int current_note_time=0;
 	milliseconds++;
-	if (background_tune_notes != 0)
-	{
-		if (current_note_time == 0)
-		{
-			index++;
-			if (index >= background_note_count)
-			{
-				if (background_tune_repeat != 0)
-				{
-					index = 0;
-				}
-				else
-				{
-					background_tune_notes=0;
-					playNote(0);
-				}
-			}
-			current_note_time = background_tune_times[index];
-			playNote(background_tune_notes[index]);
-		}
-		else
-		{
-			current_note_time--;
-		}
-	}
+	
 }
 void initClock(void)
 {
@@ -608,8 +570,18 @@ void menu_start(int randx,int randy ){
 	//loop for menu 
 	while (1)
 	{	
-		//start music 
-		playBackgroundTune(my_tune_notes,my_tune_times,3,0);
+		//music 
+		playNote(C2); 
+		delay(1000); //sleep
+		playNote(E2); 
+		delay(1000);//sleep
+		playNote(G2); 
+		delay(1000);//sleep
+		playNote(C3); 
+		delay(1000);//sleep
+		playNote(B3);
+		delay(1000); //sleep
+		playNote(0)//stop
 
 		//				gui
 		//text
@@ -744,11 +716,3 @@ void reset(int randx,int randy )
 }
 
 
-//background music 
-void playBackgroundTune(uint32_t * notes, uint32_t * times, uint32_t count, uint32_t repeat)
-{
-	background_tune_notes=notes;
-	background_tune_times=times;
-	background_note_count=count;
-	background_tune_repeat=repeat;
-}
