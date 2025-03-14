@@ -28,7 +28,7 @@ void reset(void);
 
 //main menu 
 void menu_start();
-void p1_game_over(int);
+void game_over(int score);
 
 
 //random functions 
@@ -43,7 +43,7 @@ int isInside(uint16_t x1, uint16_t y1, uint16_t w, uint16_t h, uint16_t px, uint
 void enablePullUp(GPIO_TypeDef *Port, uint32_t BitNumber);
 void pinMode(GPIO_TypeDef *Port, uint32_t BitNumber, uint32_t Mode);
 
-void item_gen(int ,int ,int );
+void item_gen(int hinverted ,int randx ,int randy );
 
 volatile uint32_t milliseconds;
 
@@ -156,7 +156,7 @@ int main()
 
 		//test serial
 		printDecimal(score);
-		
+
 		//Lilguy code
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
@@ -202,6 +202,7 @@ int main()
 
 		//movement of superevilguy 
 		switch(randevil) {
+			//right 
 			case 1:
 				if (x2 < 110)
 				{
@@ -210,6 +211,7 @@ int main()
 					hinverted2=0;
 				}				
 				break;
+			// left 
 			case 2:
 				if (x2 > 10)
 				{
@@ -218,6 +220,7 @@ int main()
 					hinverted2=1;
 				}				
 				break;
+			//up 
 			case 3:
 				if (y2 < 140)
 				{
@@ -226,6 +229,7 @@ int main()
 					vinverted2 = 0;
 				}
 				break;
+			//down 
 			case 4:
 				if (y2 > 16)
 				{
@@ -607,10 +611,10 @@ void health(void){
 			//if player 1 
 			if(player_mode == 1 ){
 
-				p1_game_over(score);
+				game_over(score);
 			}
 			if(player_mode == 2 ){
-				p2_game_over(score);
+				game_over(score);
 			}
 		}
 	}
