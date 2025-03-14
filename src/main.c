@@ -29,7 +29,7 @@ void reset(void);
 //main menu 
 void menu_start();
 void p1_game_over(int);
-void p2_game_over(int);
+
 
 //random functions 
 int randomevil(void); 
@@ -129,7 +129,7 @@ int main()
 	initSound();
 
 	//start menu 
-	menu_start(&x ,  &y, &x2 , &y2 , &oldx, &oldy ,&oldx2, &oldy2);
+	menu_start(/*&x ,  &y, &x2 , &y2 , &oldx, &oldy ,&oldx2, &oldy2*/);
 	
 	//serial 
 	initSerial(); 
@@ -156,6 +156,7 @@ int main()
 
 		//test serial
 		printDecimal(score);
+		
 		//Lilguy code
 		if ((GPIOB->IDR & (1 << 4))==0) // right pressed
 		{					
@@ -615,51 +616,6 @@ void health(void){
 	}
 
 }	
-
-//______________________________________________________________________________________________________________
-//serial 
-/*
-void initSerial()
-{
-	// On the nucleo board, TX is on PA2 while RX is on PA15 
-	RCC->AHBENR |= (1 << 17); // enable GPIOA
-	RCC->APB2ENR |= (1 << 14); // enable USART1
-	pinMode(GPIOA,2,2); // enable alternate function on PA2
-	pinMode(GPIOA,15,2); // enable alternate function on PA15
-	// AF1 = USART1 TX on PA2
-	GPIOA->AFR[0] &= 0xfffff0ff;
-	GPIOA->AFR[0] |= (1 << 8);
-	// AF1 = USART1 RX on PA15
-	GPIOA->AFR[1] &= 0x0fffffff;
-	GPIOA->AFR[1] |= (1 << 28);
-	// De-assert reset of USART1 
-	RCC->APB2RSTR &= ~(1u << 14);
-	
-	USART1->CR1 = 0; // disable before configuration
-	USART1->CR3 |= (1 << 12); // disable overrun detection
-	USART1->BRR = 48000000/9600; // assuming 48MHz clock and 9600 bps data rate
-	USART1->CR1 |= (1 << 2) + (1 << 3); // enable Transmistter and receiver
-	USART1->CR1 |= 1; // enable the UART
-
-}
-
-
-//gets charactar 
-char egetchar()
-{
-	while( (USART1->ISR & (1 << 5)) == 0); // wait for a character
-	return (char)USART1->RDR; // return the character that is waiting in the Receive Data Register
-}
-
-//puts string 
-void eputs(char *String)
-{
-	while(*String) // keep printing until a NULL is found
-	{
-		eputchar(*String);
-		String++;
-	}
-}*/
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
 void p1_game_over(score){
@@ -702,10 +658,6 @@ void p1_game_over(score){
 		
 }
 
-
-void p2_game_over(score){
-
-}
 
 void reset()
 {
