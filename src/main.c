@@ -88,6 +88,9 @@ int player_mode;
 int main()
 {
 	//variables 
+
+	int difficulty;
+
 	int hinverted = 0;
 	int vinverted = 0;
 	int toggle = 0;
@@ -208,7 +211,7 @@ int main()
 			case 1:
 				if (x2 < 110)
 				{
-					x2 = x2 + 3;
+					x2 = x2 + 3*difficulty;
 					hmoved2 = 1;
 					hinverted2=0;
 				}				
@@ -217,7 +220,7 @@ int main()
 			case 2:
 				if (x2 > 10)
 				{
-					x2 = x2 - 3;
+					x2 = x2 - 3*difficulty;
 					hmoved2 = 1;
 					hinverted2=1;
 				}				
@@ -226,7 +229,7 @@ int main()
 			case 3:
 				if (y2 < 140)
 				{
-					y2 = y2 + 3;			
+					y2 = y2 + 3*difficulty;			
 					vmoved2 = 1;
 					vinverted2 = 0;
 				}
@@ -235,7 +238,7 @@ int main()
 			case 4:
 				if (y2 > 16)
 				{
-					y2 = y2 - 3;
+					y2 = y2 - 3*difficulty;
 					vmoved2 = 1;
 					vinverted2 = 1;
 				}
