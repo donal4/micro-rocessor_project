@@ -704,7 +704,7 @@ void game_over(int score, uint16_t *x, uint16_t *y, uint16_t *x2 , uint16_t *y2 
 		eputs("\nplayer high score:");                         
 		printDecimal(score);
 
-		reset(); // resets the game 
+		reset(&x,  &y,  &x2 ,  &y2 ,  &oldx ,  &oldy ,  &oldx2 ,  &oldy2); // resets the game 
 			
 	}
 		//menu 
@@ -716,7 +716,7 @@ void game_over(int score, uint16_t *x, uint16_t *y, uint16_t *x2 , uint16_t *y2 
 		eputs("\nplayer high score:"); 
 		printDecimal(score);
 
-		reset(); // resets the game 
+		reset(&x,  &y,  &x2 ,  &y2 ,  &oldx ,  &oldy ,  &oldx2 ,  &oldy2); // resets the game 
 	}
 	
 	__asm("wfi");//sleep 
