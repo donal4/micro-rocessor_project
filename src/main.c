@@ -111,7 +111,7 @@ int main()
 {
 	//variables 
 
-	
+	/*
 	//selects the difficulty bassed off of response 
 	if (difficulty == 0){
 
@@ -132,7 +132,7 @@ int main()
 			eputs("\n\ndifficulty is hard!\n\n");
 		}
 	}
-	
+	*/
 
 
 	//random x and y 
@@ -654,73 +654,43 @@ void item_gen(int randy,int randx){
 	//putImage(x,y,12,16,coin,0,0);//
 	putImage(randx,randy,16,16,coin,hinverted,0);
 }
-/*
-void coins(int randx,int randy , uint16_t x , uint16_t y ){
-	
-	// Now check for an overlap by checking to see if ANY of the 4 corners of Coin are within the target area
-	if ((isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )== 1 )
-	{
-		//adds one to the score 
-		score+=1;
 
-		//play sound 
-		playNote(B6);//coin sound 
-		delay(10);//delay
-		playNote(B7);//octave above 
-		delay(10);//delay
-		delay(10);//delay
-		playNote(0);//stops sound
-
-
-		fillRectangle(randx,randy,16,16,0);// covers scren with black pixels 
-			
-
-		//resets the random x and y co -ords 
-		randx = random_x();
-		randy = random_y();
-
-		//calls the item gen function 
-		item_gen(hinverted ,randy,randx);
-
-	}		
-}
-	*/
 void health(int randx,int randy){
 	while(1){
 		if(hp == 3){
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<2);
+			GPIOA->ODR = GPIOA->ODR|= (1<<2);//on
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<1);
+			GPIOA->ODR = GPIOA->ODR|= (1<<1);//on
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);//on
 			break; 
 		}
 		if(hp == 2){
 
-			GPIOA->ODR = GPIOA->ODR|= (0<<2);
+			GPIOA->ODR = GPIOA->ODR &= ~(0<<2);//off
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<1);
+			GPIOA->ODR = GPIOA->ODR|= (1<<1);//on
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);//on
 			break;
 		}
 		if(hp == 1){
 
-			GPIOA->ODR = GPIOA->ODR|= (0<<2);
+			GPIOA->ODR = GPIOA->ODR &= ~(0<<2);//off
 
-			GPIOA->ODR = GPIOA->ODR|= (0<<1);
+			GPIOA->ODR = GPIOA->ODR &= ~(0<<1);//off
 
-			GPIOA->ODR = GPIOA->ODR|= (1<<3);
+			GPIOA->ODR = GPIOA->ODR|= (1<<3);//on
 			break;
 		}
 		if(hp == 0){
 
-			GPIOA->ODR = GPIOA->ODR|= (0<<2);
+			GPIOA->ODR = GPIOA->ODR &= ~(0<<2);//off
 
-			GPIOA->ODR = GPIOA->ODR|= (0<<1);
+			GPIOA->ODR = GPIOA->ODR &= ~(0<<1);//off
 
-			GPIOA->ODR = GPIOA->ODR|= (0<<3);
+			GPIOA->ODR = GPIOA->ODR &= ~(0<<3);//off
 			
 			//ends the game 
 			game_over(randx , randy);
