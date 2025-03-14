@@ -84,6 +84,11 @@ int hp = 3;
 //player score 
 int score = 0;
 int player_mode; 
+
+uint16_t x = 50;
+uint16_t y = 50;
+uint16_t x2 = 100;
+uint16_t y2 = 100;
 //------------------------------------------------main------------------------------------------------------------
 int main()
 {
@@ -112,10 +117,7 @@ int main()
 	
 	
 	//positioning 
-	uint16_t x = 50;
-	uint16_t y = 50;
-	uint16_t x2 = 100;
-	uint16_t y2 = 100;
+	
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	uint16_t oldx2 = x2;
@@ -201,6 +203,7 @@ int main()
 			reset();
 		}
 
+		
 		int randevilcount;
 		//movement of superevilguy 
 		switch(randevil) {
@@ -318,9 +321,11 @@ int main()
 			}
 		}	
 		
+		//if evilguy touches a coin 
 		if ((vmoved2) || (hmoved2)){
 		if (isInside(randx,randy,16,16,x2,y2) || isInside(randx,randy,16,16,x2+16,y2) || isInside(randx,randy,16,16,x2,y2+16) || isInside(randx,randy,16,16,x2+16,y2+16) )
 			{
+				//takes one score from user 
 				score--;
 				//play sound 
 				playNote(B6);//coin sound 
@@ -338,9 +343,11 @@ int main()
 				fillRectangle(randx,randy,16,16,0);
 				
 
+				//creates a new x and y for the next coin 
 				randx = random_x();
 				randy = random_y();
 
+				//redraws the coin 
 				putImage(randx,randy,16,16,coin,hinverted,0);
 				
 			}
@@ -357,7 +364,13 @@ int main()
 				delay(10);//delay
 				playNote(0);//stops sound
 
-				hp--; 
+
+				//resets player position 
+				x = 50;
+				y = 50;
+				x2 = 100;
+				y2 = 100;
+				hp--; //takes 1 health 
 				health();//updates the lights relative to health 
 
 				//to do remove line when fixed 
@@ -736,7 +749,13 @@ void reset()
 	score = 0; //sets score back to 0 
 	delay(1000);//sleeps 1 second 
 	menu_start(); 
-	
+
+	//should reset the lilguy and superevilguy 
+	x = 50 ; 
+	y= 50 ; 
+	x2 = 100; 
+	y2 = 100 ; 
+
 }
 
 
