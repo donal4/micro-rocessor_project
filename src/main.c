@@ -201,6 +201,7 @@ int main()
 			reset();
 		}
 
+		int randevilcount;
 		//movement of superevilguy 
 		switch(randevil) {
 			//right 
@@ -240,7 +241,30 @@ int main()
 				}
 			
 		}
-		randevil = randomevil();
+		//Changes diretion every 4 passes
+		if((randevilcount % 4) ==0){
+			randevil = randomevil();		
+		}
+		randevilcount++;
+
+		//Bouncing
+		if(x2 >  110){
+			randevil = 2;
+		}
+
+		if(x2 < 10){
+			randevil = 1;
+		}
+		
+		if(y2 > 140){
+			randevil = 4;
+		}
+
+		if(y2 < 16){
+			randevil = 3;
+		}
+
+
 		
 		
 		if ((vmoved) || (hmoved))
@@ -654,7 +678,8 @@ void health(void){
 //------------------------------------------------------------------------------------------------------------------------
 //game over screen for players 
 void game_over(score){
-	//fillRectangle(0,0,128, 160, 0x0);  // black out the screen
+	delay(500);
+	fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 	//loop for menu 
 	
 	// text 
@@ -667,32 +692,31 @@ void game_over(score){
 	printText("Play again?: ^", 10, 120, RGBToWord(0xff,0x0,0), 0);
 	printText("Main Menu?  >",10, 128, RGBToWord(0xff,0x0,0), 0); 
 
-	__asm("wfi");//sleep 
-	delay(100);
+	delay(3000);
 	
 	//play again 
-	if ( (GPIOA->IDR & (1 << 8)) == 0)//up
+	if ( (GPIOA->IDR & (1 << 8)) == 1)//up
 	{
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 		//prints the players score ro the screen 
 		eputs("\nplayer high score:");                         
 		printDecimal(score);
+
+		reset(); // resets the game 
 			
 	}
 		//menu 
-	if ( (GPIOA->IDR & (1 << 4)) == 0)//right
+	if ( (GPIOA->IDR & (1 << 4)) == 1)//right
 	{
 		fillRectangle(0,0,128, 160, 0x0);  // black out the screen
 
 			//sends score to pc 
 		eputs("\nplayer high score:"); 
 		printDecimal(score);
+
+		reset(); // resets the game 
 	}
-	delay(30);//waits 3 seconds 
-	 
 	
-	__asm("wfi");//sleep 
-	reset(); // resets the game 
 		
 }
 
@@ -702,7 +726,7 @@ void reset()
 	fillRectangle(0,0,128,160,0x0);
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
-	delay(10);//sleeps 1 second 
+	delay(1000);//sleeps 1 second 
 	menu_start(); 
 	
 }
