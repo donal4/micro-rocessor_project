@@ -169,6 +169,7 @@ int main()
 	
 	while(1)
 	{
+		putImage(randx,randy,16,16,coin,hinverted,0);
 		health(randx, randy);
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
@@ -577,23 +578,11 @@ int randomevil(){
 
 void menu_start(int randx,int randy ){
 	//positioning 
-
-
+	
 	//loop for menu 
 	while (1)
 	{	
-		//music 
-		playNote(C2); 
-		delay(1000); //sleep
-		playNote(E2); 
-		delay(1000);//sleep
-		playNote(G2); 
-		delay(1000);//sleep
-		playNote(C3); 
-		delay(1000);//sleep
-		playNote(B3);
-		delay(1000); //sleep
-		playNote(0);//stop
+		
 
 		//				gui
 		//text
@@ -608,6 +597,7 @@ void menu_start(int randx,int randy ){
 		putImage(80,100,16,16,superevilguy1,0,0);
 		putImage(40,100,16,16,lilguy,0,0);
 
+		
 
 		__asm("wfi");//sleep 
 		//start  
