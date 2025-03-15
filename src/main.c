@@ -117,15 +117,16 @@ int main()
 	initClock();
 	initSysTick();
 	setupIO();
-	
 	//sound 
 	initSound();
 
+	//serial 
+	initSerial(); 
+	
+	
 	//start menu 
 	menu_start(randy,randx);
 	
-	//serial 
-	initSerial(); 
 
 
 
@@ -136,21 +137,23 @@ int main()
 	//draws super evilguy 
 	putImage(x2,y2,16,16,superevilguy1,hinverted,0);
 	
-	//light test 
-	pinMode(GPIOA,1,1);
-	pinMode(GPIOA,2 , 1);
-	pinMode(GPIOA,3 , 1);
+	
 	
 	while(1)
 	{
+		//send score to serial 
+		eputs("score\n"); 
+		printDecimal(score);
+
 		//shows the image of the coin 
 		putImage(randx,randy,16,16,coin,hinverted,0);
-
+		
 		//checks health 
 		health(randx, randy);
 		//shows the player score 
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
+		
 		//prints health
 		printNumber(hp,60,  10, RGBToWord(0xff,0,0), 0);
 		hmoved = vmoved = 0;
@@ -340,7 +343,7 @@ int main()
 				delay(10);//delay
 				delay(10);//delay
 				playNote(0);//stops sound
-				
+
 				fillRectangle(randx,randy,16,16,0);
 				
 
