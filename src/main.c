@@ -6,7 +6,7 @@
 //sound 
 #include "sound.h"
 #include "musical_notes.h"
-#include "serial.h"
+//#include "serial.h"
 
 void initClock(void);
 void initSysTick(void);
@@ -15,7 +15,7 @@ void delay(volatile uint32_t dly);
 void setupIO();
 
 //serial 
-void initSerial();
+//void initSerial();
 void health(int randx,int randy); 
 //sound 
 void playNote(uint32_t Freq);
@@ -70,6 +70,7 @@ int difficulty = 1;
 int hp = 3; 
 //player score 
 int score = 0;
+int startup = 0 ; 
 
 
 uint16_t x = 50;
@@ -150,7 +151,7 @@ int main()
 	menu_start(randy,randx);
 	
 	//serial 
-	initSerial(); 
+	//initSerial(); 
 
 
 
@@ -307,7 +308,7 @@ int main()
 			}
 
 			
-			// Now check for an overlap by checking to see if ANY of the 4 corners of deco are within the target area
+			// generates coin 
 			if (isInside(randx,randy,16,16,x,y) || isInside(randx,randy,16,16,x+16,y) || isInside(randx,randy,16,16,x,y+16) || isInside(randx,randy,16,16,x+16,+16) )
 			{
 				score+=1;
@@ -319,11 +320,7 @@ int main()
 				delay(10);//delay
 				playNote(0);//stops sound
 
-				/*
-				int oldrandx = randx;
-				int oldrandy = randy;
-				*/
-
+				
 				fillRectangle(randx,randy,16,16,0);
 				
 
@@ -332,6 +329,20 @@ int main()
 
 				putImage(randx,randy,16,16,coin,hinverted,0);
 				
+			}
+			//if the game starts/resets to generate the first coin 
+			else if(startup == 0 ){
+				//covers old coin 
+				fillRectangle(randx,randy,16,16,0);
+				
+				//makes a random x and a random y for the coin 
+				randx = random_x();
+				randy = random_y();
+
+				//puts an image of the coin in that spot 
+				putImage(randx,randy,16,16,coin,hinverted,0);
+				//sets veriable for startup to one so the player can only grab the coins on screeen 
+				startup = 1; 
 			}
 		}	
 		
@@ -384,6 +395,7 @@ int main()
 				y = 50;
 				x2 = 100;
 				y2 = 100;
+				startup = 1 ;
 				hp--; //takes 1 health 
 				health( randx, randy);//updates the lights relative to health 
 
@@ -698,8 +710,8 @@ void reset(int randx,int randy )
 	fillRectangle(0,0,128,160,0x0);
 
 	//sends the users highscore to serial 
-	eputs("\n\nhigh score!"); 
-	printDecimal(score);
+	//eputs("\n\nhigh score!"); 
+	//printDecimal(score);
 
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
