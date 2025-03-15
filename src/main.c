@@ -6,7 +6,7 @@
 //sound 
 #include "sound.h"
 #include "musical_notes.h"
-//#include "serial.h"
+#include "serial.h"
 
 void initClock(void);
 void initSysTick(void);
@@ -15,7 +15,7 @@ void delay(volatile uint32_t dly);
 void setupIO();
 
 //serial 
-//void initSerial();
+void initSerial();
 void health(int randx,int randy); 
 //sound 
 void playNote(uint32_t Freq);
@@ -99,31 +99,6 @@ int vmoved2 = 0;
 int main()
 {
 	//variables 
-
-	/*
-	//selects the difficulty bassed off of response 
-	if (difficulty == 0){
-
-		// prompts the user 
-		eputs("\n\n\nEnter difficulty: \n easy (e) hard(h)");
-
-		//takes the user input 
-		char check = egetchar(); 
-
-		//easy 
-		if(check == 'e'){
-			difficulty = 1 ;  
-			eputs("\n\ndifficulty is easy!\n\n");
-		}
-		//hard 
-		else{
-			difficulty = 2; 
-			eputs("\n\ndifficulty is hard!\n\n");
-		}
-	}
-	*/
-
-
 	//random x and y 
 	int randx = random_x();
 	int randy = random_y();
@@ -133,7 +108,6 @@ int main()
 	
 	
 	//positioning 
-	
 	uint16_t oldx = x;
 	uint16_t oldy = y;
 	uint16_t oldx2 = x2;
@@ -151,7 +125,7 @@ int main()
 	menu_start(randy,randx);
 	
 	//serial 
-	//initSerial(); 
+	initSerial(); 
 
 
 
@@ -169,10 +143,16 @@ int main()
 	
 	while(1)
 	{
+		//shows the image of the coin 
 		putImage(randx,randy,16,16,coin,hinverted,0);
+
+		//checks health 
 		health(randx, randy);
+		//shows the player score 
 		printTextX2("score", 0, 0, RGBToWord(0xff,0xff,0), 0);
 		printNumber(score, 60, 0, RGBToWord(0xff,0xff,0), 0);
+		//prints health
+		printNumber(hp,60,  10, RGBToWord(0xff,0,0), 0);
 		hmoved = vmoved = 0;
 		hinverted = vinverted = 0;
 
@@ -360,12 +340,7 @@ int main()
 				delay(10);//delay
 				delay(10);//delay
 				playNote(0);//stops sound
-
-				/*
-				int oldrandx = randx;
-				int oldrandy = randy;
-				*/
-
+				
 				fillRectangle(randx,randy,16,16,0);
 				
 
@@ -700,8 +675,8 @@ void reset(int randx,int randy )
 	fillRectangle(0,0,128,160,0x0);
 
 	//sends the users highscore to serial 
-	//eputs("\n\nhigh score!"); 
-	//printDecimal(score);
+	eputs("\n\nhigh score!"); 
+	printDecimal(score);
 
 	hp = 3; //resets health
 	score = 0; //sets score back to 0 
